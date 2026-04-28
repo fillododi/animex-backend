@@ -1,0 +1,1 @@
+export type ErrorCode = "ROUTE_NOT_FOUND";

@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { AppError } from "../utils/AppError";
+import { AppError } from "./errorHandler";
 
 export const notFoundHandler: RequestHandler = (req, res, next) => {
     next(

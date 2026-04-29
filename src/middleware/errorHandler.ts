@@ -2,7 +2,7 @@ import { ErrorRequestHandler } from "express";
 
 type ErrorCode = "ROUTE_NOT_FOUND";
 
-class AppError extends Error {
+export class AppError extends Error {
     public readonly statusCode: number;
     public readonly code: ErrorCode;
     public readonly details?: unknown;

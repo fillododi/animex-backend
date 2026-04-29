@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from "express";
 import { ENV } from "../config/env";
 
-type ErrorCode = "ROUTE_NOT_FOUND";
+type ErrorCode = "ROUTE_NOT_FOUND" | "SERVICE_UNAVAILABLE";
 
 export class AppError extends Error {
     public readonly statusCode: number;

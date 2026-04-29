@@ -1,5 +1,61 @@
 import { z } from "zod"
 
+export type Animal = {
+    id: string,
+    displayName: string,
+    scientificName: string,
+    taxonomicClass?: string,
+    aliases: string[],
+    vision: {
+        supportedLabels: {
+            name: string,
+            weight: number
+        }[],
+        supportedWebEntities: {
+            name: string,
+            weight: number
+        }[],
+        negativeLabels: string[],
+        thresholds: {
+            minMatchScore: number,
+            strongMatchScore: number,
+            ambiguityDelta: number
+        }
+    },
+    habitat: {
+        primaryHabitatId: string,
+        habitatIds: string[],
+        summary: string,
+        climate: string,
+        mapRefs: string[]
+    },
+    diet: {
+        type: "herbivore" | "carnivore" | "omnivore" | "insectivore" | "piscivore" | "unknown",
+        description: string,
+        examples: string[]
+    },
+    facts: string[],
+    conservationStatus: "EX" | "EW" | "CR" | "EN" | "VU" | "NT" | "LC",
+    assets: {
+        thumbnail?: string,
+        silhouette?: string,
+        habitatBackground?: string,
+        arObjects?: string[]
+    },
+    quiz: {
+        difficulty: "easy" | "medium" | "hard",
+        questions: {
+            id: string,
+            type: "multiple_choice" | "yes_no" | "open_text",
+            prompt: string,
+            choices?: string[],
+            acceptedAnswers: string[],
+            feedback: string,
+            habitatRelated?: boolean
+        }[]
+    }[]
+}
+
 export const AnimalSchema = z.object({
     id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     displayName: z.string().trim().min(1),

@@ -1,9 +1,11 @@
 import { Router, Request, Response } from "express"
+import { loadAnimalCatalog } from "../services/animalCatalog.service"
+import { AppError } from "../middleware/errorHandler"
 
 const router = Router()
 
-router.get("/", (_req: Request, _res: Response) => {
+router.get("/healthz", (_req: Request, _res: Response) => {
     return _res.status(200).json({ ok: true, status: "live" })
 })
 
-module.exports = router
+export const healthRouter = router

@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from "express";
 import { AppError } from "../utils/AppError";
 
-export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     const isDevelopment = process.env.NODE_ENV === "development";
 
     if(err instanceof AppError) {

@@ -7,6 +7,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { healthRouter } from "./routes/health.routes";
 import { requestIdMiddleware } from "./middleware/requestId";
 import { v1Router } from "./routes/v1.routes";
+import { httpLogger } from "./middleware/httpLogger";
 
 export function createApp() {
     const app = express();
@@ -17,6 +18,7 @@ export function createApp() {
     app.use(cors())
 
     app.use(requestIdMiddleware)
+    app.use(httpLogger)
 
     app.use(healthRouter)
     app.use("/api/v1", v1Router)

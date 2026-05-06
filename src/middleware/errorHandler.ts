@@ -2,6 +2,7 @@ import { ErrorRequestHandler } from "express";
 import { ENV } from "../config/env";
 import { ErrorCode, failure } from "../schemas/api.schema";
 import { ZodError } from "zod";
+import { logger } from "../config/logger";
 
 export class AppError extends Error {
     public readonly statusCode: number;
@@ -40,12 +41,12 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
         }))
     }
 
-    console.error("Unexpected error:", {
+    logger.error({
         message: err.message,
         stack: err.stack,
         path: req.path,
         method: req.method
-    })
+    }, "Unexpected Error")
 
     return res.status(500).json(failure(req.requestId, {
         code: "INTERNAL_ERROR",

@@ -5,6 +5,7 @@ import cors from "cors";
 import { notFoundHandler } from "./middleware/notFound";
 import { errorHandler } from "./middleware/errorHandler";
 import { healthRouter } from "./routes/health.routes";
+import { requestIdMiddleware } from "./middleware/requestId";
 
 export function createApp() {
     const app = express();
@@ -13,6 +14,8 @@ export function createApp() {
     app.use(express.json())
     app.use(helmet())
     app.use(cors())
+
+    app.use(requestIdMiddleware)
 
     app.use("", healthRouter)
 

@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from "express";
 import { ENV } from "../config/env";
-
-type ErrorCode = "ROUTE_NOT_FOUND" | "SERVICE_UNAVAILABLE";
+import { ErrorCode, failure } from "../schemas/api.schema";
+import { ZodError } from "zod";
 
 export class AppError extends Error {
     public readonly statusCode: number;
@@ -21,13 +21,23 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     const isDevelopment = ENV.NODE_ENV === "development";
 
     if(err instanceof AppError) {
-        return res.status(err.statusCode).json({
-            error: {
-                code: err.code,
-                message: err.message,
-                ...(isDevelopment && err.details ? { details: err.details } : {})
-            }
-        })
+        return res.status(err.statusCode).json(failure(req.requestId, {
+            code: err.code,
+            message: err.message,
+            ...(isDevelopment && err.details ? { details: err.details } : {})
+        }))
+    }
+
+    if(err instanceof ZodError) {
+        const details = err.issues.map(issue => ({
+            path: issue.path.join("."),
+            reason: issue.message
+        }))
+        return res.status(400).json(failure(req.requestId, {
+            code: "VALIDATION_ERROR",
+            message: "Request validation failed",
+            ...(isDevelopment && details ? { details: details } : {})
+        }))
     }
 
     console.error("Unexpected error:", {
@@ -37,11 +47,9 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
         method: req.method
     })
 
-    return res.status(500).json({
-        error: {
-            code: "INTERNAL_ERROR",
-            message: "Something went wrong",
-            ...(isDevelopment ? { details: { message: err.message, stack: err.stack } } : {})
-        }
-    })
+    return res.status(500).json(failure(req.requestId, {
+        code: "INTERNAL_ERROR",
+        message: "Something went wrong",
+        ...(isDevelopment ? { details: { message: err.message, stack: err.stack } } : {})
+    }))
 }

@@ -1,4 +1,8 @@
 import { z } from "zod"
+export type ErrorCode = "ROUTE_NOT_FOUND" | 
+    "SERVICE_UNAVAILABLE" | 
+    "INTERNAL_ERROR" | 
+    "VALIDATION_ERROR";
 
 export const ApiMetaSchema = z.object({
     requestId: z.string(),
@@ -8,15 +12,13 @@ export const ApiMetaSchema = z.object({
 export const ApiErrorSchema = z.object({
     code: z.string(),
     message: z.string(),
-    details: z.unknown().optional(),
-    retryable: z.boolean()
+    details: z.unknown().optional()
 })
 
 type ApiError = {
-    code: string,
+    code: ErrorCode,
     message: string,
     details?: unknown,
-    retryable?: boolean
 }
 
 export function success<T>(requestId: string, data: T) {
@@ -36,8 +38,7 @@ export function failure(requestId: string, error: ApiError) {
         error: {
             code: error.code,
             message: error.message,
-            details: error.details,
-            retryable: error.retryable ?? false
+            details: error.details
         },
         meta: {
             requestId,

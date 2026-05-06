@@ -3,7 +3,6 @@ import { getAnimalCatalogStatus } from "../services/animalCatalog.service"
 import { getVisionStatus } from "../services/vision.service"
 import { getGeminitatus } from "../services/gemini.service"
 import { failure, success } from "../schemas/api.schema"
-import { AppError } from "../middleware/errorHandler"
 
 const router = Router()
 

@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express"
-import { getAnimalCatalogStatus } from "../services/animalCatalog.service"
+import { getAnimalCatalogStatus, getHabitatCatalogStatus } from "../services/catalog.service"
 import { getVisionStatus } from "../services/vision.service"
 import { getGeminitatus } from "../services/gemini.service"
 import { failure, success } from "../schemas/api.schema"
@@ -11,11 +11,14 @@ router.get("/healthz", (_req: Request, _res: Response) => {
 })
 
 router.get("/readyz", (_req: Request, _res: Response, _next: NextFunction) => {
-    const catalog = getAnimalCatalogStatus()
+    const animalCatalog = getAnimalCatalogStatus()
+    const habitatCatalog = getHabitatCatalogStatus()
     const vision = getVisionStatus()
     const gemini = getGeminitatus()
-    const ready = catalog.loaded && 
-        catalog.animalsLoaded > 0 && 
+    const ready = animalCatalog.loaded && 
+        animalCatalog.itemsLoaded > 0 && 
+        habitatCatalog.loaded &&
+        habitatCatalog.itemsLoaded > 0 &&
         vision.visionConfigured && 
         gemini.geminiConfigured
     if(!ready) {
@@ -23,7 +26,8 @@ router.get("/readyz", (_req: Request, _res: Response, _next: NextFunction) => {
             code: "SERVICE_UNAVAILABLE",
             message: "Backend is not ready",
             details: {
-                catalog,
+                animalCatalog,
+                habitatCatalog,
                 vision,
                 gemini
             }
@@ -31,7 +35,7 @@ router.get("/readyz", (_req: Request, _res: Response, _next: NextFunction) => {
     }
     return _res.status(200).json(success(_req.requestId, { 
         ready: true, 
-        animalsLoaded: catalog.animalsLoaded, 
+        animalsLoaded: animalCatalog.itemsLoaded,
         visionConfigured: true,
         geminiConfigured: true
     }))

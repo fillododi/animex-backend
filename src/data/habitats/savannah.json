@@ -1,0 +1,10 @@
+{
+    "id": "savannah",
+    "displayName": "Savana",
+    "summary": "La savana è un bioma terrestre soprattutto subtropicale e tropicale caratterizzato da una stagione secca e da una stagione umida.",
+    "description": "Questo tipo di ambiente si trova in molte zone di transizione fra la foresta pluviale e il deserto o la steppa in Africa centrale, Centro e Sud America, India, Indocina e Australia, ma può essere presente anche ad altre latitudini. Le savane possono formarsi in seguito alla presenza di specifiche condizioni climatiche, oppure a causa di incendi stagionali (anche indotti dall'uomo) o particolari faune caratteristiche del suolo",
+    "climate": "una stagione secca e una stagione umida",
+    "mapRefs": [],
+    "assets": {},
+    "relatedAnimalIds": []
+}

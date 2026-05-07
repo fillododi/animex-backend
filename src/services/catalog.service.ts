@@ -3,6 +3,7 @@ import fs from "node:fs/promises"
 import z from "zod"
 import { Animal, AnimalSchema } from "../schemas/animal.schema"
 import { Habitat, HabitatSchema } from "../schemas/habitat.schema"
+import { AppError } from "../middleware/errorHandler"
 
 interface Catalog<T> {
     loaded: boolean,
@@ -76,7 +77,18 @@ const habitatCatalog = createCatalog<Habitat>({
 
 export const loadAnimalCatalog = animalCatalog.load
 export const getAnimalCatalogStatus = animalCatalog.getStatus
-export const getAnimals = animalCatalog.getItems
 export const loadHabitatCatalog = habitatCatalog.load
 export const getHabitatCatalogStatus = habitatCatalog.getStatus
-export const getHabitats = habitatCatalog.getItems
+export const getAnimals = (): string[] => {
+    return animalCatalog.getItems().map(animal => animal.id)
+}
+export const getAnimalById = (id: string): Animal => {
+    const animal = animalCatalog.getItems().find(animal => animal.id === id)  
+    if (!animal) throw new AppError({
+        statusCode: 404,
+        code: "ANIMAL_NOT_FOUND",
+        message: "Could not find an animal",
+        details: { id }
+    })
+    return animal
+}

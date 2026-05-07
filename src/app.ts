@@ -8,6 +8,7 @@ import { healthRouter } from "./routes/health.routes";
 import { requestIdMiddleware } from "./middleware/requestId";
 import { v1Router } from "./routes/v1.routes";
 import { httpLogger } from "./middleware/httpLogger";
+import { corsOptions } from "./config/cors";
 
 export function createApp() {
     const app = express();
@@ -15,9 +16,11 @@ export function createApp() {
     app.disable("x-powered-by")
     app.use(express.json())
     app.use(helmet())
-    app.use(cors())
+    
 
     app.use(requestIdMiddleware)
+    app.use(cors(corsOptions))
+
     app.use(httpLogger)
 
     app.use(healthRouter)

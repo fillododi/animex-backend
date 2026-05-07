@@ -2,7 +2,8 @@ import { z } from "zod"
 export type ErrorCode = "ROUTE_NOT_FOUND" | 
     "SERVICE_UNAVAILABLE" | 
     "INTERNAL_ERROR" | 
-    "VALIDATION_ERROR";
+    "VALIDATION_ERROR" |
+    "CORS_ORIGIN_BLOCKED"
 
 export const ApiMetaSchema = z.object({
     requestId: z.string(),

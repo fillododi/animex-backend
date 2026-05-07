@@ -7,5 +7,6 @@ Development
 - npm run dev
 
 Production
+- npm run lint
 - npm run build
 - npm start

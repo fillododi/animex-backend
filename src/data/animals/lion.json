@@ -1,0 +1,32 @@
+{
+    "id": "lion",
+    "displayName": "Leone",
+    "scientificName": "Panthera Leo",
+    "aliases": ["leone"],
+    "vision": {
+        "supportedLabels": [],
+        "supportedWebEntities": [],
+        "negativeLabels": [],
+        "thresholds": {
+            "minMatchScore": 0.6,
+            "strongMatchScore": 0.8,
+            "ambiguityDelta": 0.1
+        }
+    },
+    "habitat": {
+        "primaryHabitatId": "savannah",
+        "habitatIds": ["savannah"],
+        "summary": "Vive in Africa nella savana",
+        "climate": "Fa caldo",
+        "mapRefs": []
+    },
+    "diet": {
+        "type": "carnivore",
+        "description": "Mangia la gazzella",
+        "examples":[]
+    },
+    "facts": ["E' giallo", "Ha fame", "Ti può uccidere"],
+    "conservationStatus": "VU",
+    "assets": {},
+    "quiz": []
+}

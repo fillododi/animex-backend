@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express"
-import { getAnimalCatalogStatus, getHabitatCatalogStatus } from "../services/catalog.service"
-import { getVisionStatus } from "../services/vision.service"
-import { getGeminitatus } from "../services/gemini.service"
+import { catalogService } from "../services/catalog.service"
+import { visionService } from "../services/vision.service"
+import { geminiService } from "../services/gemini.service"
 import { failure, success } from "../schemas/api.schema"
 
 const router = Router()
@@ -11,10 +11,10 @@ router.get("/healthz", (_req: Request, _res: Response) => {
 })
 
 router.get("/readyz", (_req: Request, _res: Response, _next: NextFunction) => {
-    const animalCatalog = getAnimalCatalogStatus()
-    const habitatCatalog = getHabitatCatalogStatus()
-    const vision = getVisionStatus()
-    const gemini = getGeminitatus()
+    const animalCatalog = catalogService.getAnimalCatalogStatus()
+    const habitatCatalog = catalogService.getHabitatCatalogStatus()
+    const vision = visionService.getVisionStatus()
+    const gemini = geminiService.getGeminiStatus()
     const ready = animalCatalog.loaded && 
         animalCatalog.itemsLoaded > 0 && 
         habitatCatalog.loaded &&

@@ -75,20 +75,21 @@ const habitatCatalog = createCatalog<Habitat>({
     schema: HabitatSchema
 })
 
-export const loadAnimalCatalog = animalCatalog.load
-export const getAnimalCatalogStatus = animalCatalog.getStatus
-export const loadHabitatCatalog = habitatCatalog.load
-export const getHabitatCatalogStatus = habitatCatalog.getStatus
-export const getAnimals = (): string[] => {
-    return animalCatalog.getItems().map(animal => animal.id)
+export const catalogService = {
+    loadAnimalCatalog: animalCatalog.load,
+    getAnimalCatalogStatus: animalCatalog.getStatus,
+    loadHabitatCatalog: habitatCatalog.load,
+    getHabitatCatalogStatus: habitatCatalog.getStatus,
+    getAnimals: animalCatalog.getItems,
+    getAnimalById: (id: string): Animal => {
+        const animal = animalCatalog.getItems().find(animal => animal.id === id)  
+        if (!animal) throw new AppError({
+            statusCode: 404,
+            code: "ANIMAL_NOT_FOUND",
+            message: "Could not find an animal",
+            details: { id }
+        })
+        return animal
+    }
 }
-export const getAnimalById = (id: string): Animal => {
-    const animal = animalCatalog.getItems().find(animal => animal.id === id)  
-    if (!animal) throw new AppError({
-        statusCode: 404,
-        code: "ANIMAL_NOT_FOUND",
-        message: "Could not find an animal",
-        details: { id }
-    })
-    return animal
-}
+

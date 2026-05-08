@@ -1,0 +1,68 @@
+{
+    "id": "italian-stream-frog",
+    "displayName": "Rana appenninica",
+    "scientificName": "Rana italica",
+    "taxonomicClass": "Amphibia",
+    "aliases": ["rana appenninica", "rana italica", "italian stream frog", "rana dei ruscelli italiana"],
+    "vision": {
+      "supportedLabels": [
+        { "name": "frog", "weight": 0.9 },
+        { "name": "true frog", "weight": 0.75 },
+        { "name": "amphibian", "weight": 0.6 }
+      ],
+      "supportedWebEntities": [
+        { "name": "Rana italica", "weight": 1 },
+        { "name": "Italian stream frog", "weight": 0.95 },
+        { "name": "Rana appenninica", "weight": 0.9 }
+      ],
+      "negativeLabels": ["toad", "tree frog", "newt", "salamander", "lizard"],
+      "thresholds": {
+        "minMatchScore": 0.58,
+        "strongMatchScore": 0.78,
+        "ambiguityDelta": 0.12
+      }
+    },
+    "habitat": {
+      "primaryHabitatId": "stream",
+      "habitatIds": ["stream", "river", "wetland", "forest"],
+      "summary": "Vive in Italia e a San Marino, vicino a ruscelli, torrenti e zone umide, spesso in ambienti ombrosi.",
+      "climate": "Fresco e umido, con acqua pulita nelle vicinanze.",
+      "mapRefs": ["italy", "san_marino", "apennines"]
+    },
+    "diet": {
+      "type": "insectivore",
+      "description": "Mangia piccoli animali, soprattutto insetti e altri invertebrati.",
+      "examples": ["insetti", "ragnetti", "piccoli vermi", "larve"]
+    },
+    "facts": [
+      "È una rana tipica dell'Italia.",
+      "Ama stare vicino all'acqua corrente, come ruscelli e torrenti.",
+      "I girini crescono in acqua prima di diventare rane adulte.",
+      "La sua pelle deve restare umida, come quella di molti anfibi."
+    ],
+    "conservationStatus": "LC",
+    "assets": {},
+    "quiz": [
+      {
+        "difficulty": "medium",
+        "questions": [
+          {
+            "id": "italian_stream_frog_q1",
+            "type": "multiple_choice",
+            "prompt": "Qual è un habitat adatto alla rana appenninica?",
+            "choices": ["Un ruscello fresco", "Un deserto asciutto", "Un ghiacciaio"],
+            "acceptedAnswers": ["Un ruscello fresco", "ruscello", "torrente"],
+            "feedback": "Esatto! Questa rana vive spesso vicino a ruscelli e torrenti.",
+            "habitatRelated": true
+          },
+          {
+            "id": "italian_stream_frog_q2",
+            "type": "yes_no",
+            "prompt": "La rana appenninica è un anfibio?",
+            "acceptedAnswers": ["sì", "si", "yes"],
+            "feedback": "Giusto! Le rane sono anfibi."
+          }
+        ]
+      }
+    ]
+  }

@@ -1,5 +1,7 @@
 import { ENV } from "../config/env";
 
-export function getGeminitatus() {
+function getGeminiStatus() {
     return { geminiConfigured: Boolean(ENV.GEMINI_API_KEY) }
 }
+
+export const geminiService = { getGeminiStatus }

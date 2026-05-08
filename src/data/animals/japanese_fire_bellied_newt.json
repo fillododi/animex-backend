@@ -1,0 +1,75 @@
+{
+    "id": "japanese-fire-bellied-newt",
+    "displayName": "Tritone dal ventre di fuoco",
+    "scientificName": "Cynops pyrrhogaster",
+    "taxonomicClass": "Amphibia",
+    "aliases": [
+      "tritone giapponese dal ventre di fuoco",
+      "tritone ventre di fuoco giapponese",
+      "japanese fire-bellied newt",
+      "japanese fire belly newt",
+      "Cynops pyrrhogaster"
+    ],
+    "vision": {
+      "supportedLabels": [
+        { "name": "newt", "weight": 0.95 },
+        { "name": "salamander", "weight": 0.8 },
+        { "name": "amphibian", "weight": 0.6 }
+      ],
+      "supportedWebEntities": [
+        { "name": "Cynops pyrrhogaster", "weight": 1 },
+        { "name": "Japanese fire-bellied newt", "weight": 0.95 },
+        { "name": "Japanese newt", "weight": 0.8 }
+      ],
+      "negativeLabels": ["lizard", "frog", "toad", "gecko", "fish"],
+      "thresholds": {
+        "minMatchScore": 0.58,
+        "strongMatchScore": 0.78,
+        "ambiguityDelta": 0.12
+      }
+    },
+    "habitat": {
+      "primaryHabitatId": "pond",
+      "habitatIds": ["pond", "wetland", "marsh", "slow_stream", "forest"],
+      "summary": "Vive in Giappone, in stagni, paludi, risaie, corsi d'acqua lenti e zone umide vicino a boschi o prati.",
+      "climate": "Umido, con acqua dolce e temperature da miti a fresche.",
+      "mapRefs": ["japan", "honshu", "shikoku", "kyushu"]
+    },
+    "diet": {
+      "type": "carnivore",
+      "description": "Mangia piccoli animali acquatici e terrestri, come larve di insetti e vermetti.",
+      "examples": ["larve di zanzara", "piccoli insetti", "vermi", "piccoli crostacei", "uova di anfibi"]
+    },
+    "facts": [
+      "Ha spesso il dorso scuro e la pancia arancione o rossa brillante.",
+      "Il colore acceso della pancia avverte i predatori che non è un buon boccone.",
+      "È un anfibio: può vivere vicino all'acqua e sulla terra umida.",
+      "Come altri tritoni, può rigenerare alcune parti del corpo meglio di molti altri animali."
+    ],
+    "conservationStatus": "NT",
+    "assets": {},
+    "quiz": [
+      {
+        "difficulty": "medium",
+        "questions": [
+          {
+            "id": "japanese_fire_bellied_newt_q1",
+            "type": "multiple_choice",
+            "prompt": "Di che colore è spesso la pancia di questo tritone?",
+            "choices": ["Rossa o arancione", "Blu brillante", "Bianca a pois verdi"],
+            "acceptedAnswers": ["Rossa o arancione", "rossa", "arancione"],
+            "feedback": "Esatto! Il suo ventre può essere rosso o arancione acceso."
+          },
+          {
+            "id": "japanese_fire_bellied_newt_q2",
+            "type": "multiple_choice",
+            "prompt": "Dove vive spesso il tritone giapponese dal ventre di fuoco?",
+            "choices": ["In stagni e zone umide", "Nel deserto", "Sulle cime innevate"],
+            "acceptedAnswers": ["In stagni e zone umide", "stagni", "zone umide"],
+            "feedback": "Giusto! Ama stagni, paludi e altri ambienti umidi.",
+            "habitatRelated": true
+          }
+        ]
+      }
+    ]
+  }

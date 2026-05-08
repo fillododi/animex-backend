@@ -1,11 +1,12 @@
 import { createApp } from "./app";
 import { ENV } from "./config/env";
-import { loadAnimalCatalog } from "./services/animalCatalog.service";
+import { catalogService } from "./services/catalog.service";
 
 async function main() {
     const app = createApp()
     const PORT = ENV.PORT || 3000;
-    loadAnimalCatalog()
+    catalogService.loadAnimalCatalog()
+    catalogService.loadHabitatCatalog()
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
     });

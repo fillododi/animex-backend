@@ -1,0 +1,68 @@
+{
+    "id": "hippopotamus",
+    "displayName": "Ippopotamo",
+    "scientificName": "Hippopotamus amphibius",
+    "taxonomicClass": "Mammalia",
+    "aliases": ["ippopotamo", "hippo", "common hippopotamus", "ippopotamo comune"],
+    "vision": {
+      "supportedLabels": [
+        { "name": "hippopotamus", "weight": 1 },
+        { "name": "hippo", "weight": 0.95 },
+        { "name": "mammal", "weight": 0.4 }
+      ],
+      "supportedWebEntities": [
+        { "name": "Hippopotamus amphibius", "weight": 1 },
+        { "name": "Common hippopotamus", "weight": 0.95 },
+        { "name": "Ippopotamo", "weight": 0.9 }
+      ],
+      "negativeLabels": ["rhinoceros", "elephant", "pig", "tapir", "buffalo"],
+      "thresholds": {
+        "minMatchScore": 0.6,
+        "strongMatchScore": 0.8,
+        "ambiguityDelta": 0.1
+      }
+    },
+    "habitat": {
+      "primaryHabitatId": "river",
+      "habitatIds": ["river", "lake", "wetland", "grassland"],
+      "summary": "Vive in Africa vicino a fiumi, laghi e paludi. Passa molto tempo in acqua e di notte esce a brucare l'erba.",
+      "climate": "Caldo, con acqua disponibile per rinfrescarsi durante il giorno.",
+      "mapRefs": ["sub_saharan_africa"]
+    },
+    "diet": {
+      "type": "herbivore",
+      "description": "Mangia soprattutto erba. Di notte può camminare fuori dall'acqua per cercare cibo.",
+      "examples": ["erba", "piante tenere", "foglie"]
+    },
+    "facts": [
+      "L'ippopotamo passa molte ore in acqua per stare fresco.",
+      "Ha occhi, orecchie e narici in alto sulla testa, così può respirare e guardare mentre è quasi immerso.",
+      "Anche se sembra lento, può muoversi rapidamente sulla terra.",
+      "I piccoli ippopotami possono stare vicino alla mamma anche in acqua."
+    ],
+    "conservationStatus": "VU",
+    "assets": {},
+    "quiz": [
+      {
+        "difficulty": "easy",
+        "questions": [
+          {
+            "id": "hippopotamus_q1",
+            "type": "multiple_choice",
+            "prompt": "Dove passa molto tempo l'ippopotamo?",
+            "choices": ["In acqua", "Sugli alberi", "Sulla neve"],
+            "acceptedAnswers": ["In acqua", "acqua"],
+            "feedback": "Bravo! L'ippopotamo passa molto tempo in fiumi, laghi e paludi.",
+            "habitatRelated": true
+          },
+          {
+            "id": "hippopotamus_q2",
+            "type": "yes_no",
+            "prompt": "L'ippopotamo mangia soprattutto erba?",
+            "acceptedAnswers": ["sì", "si", "yes"],
+            "feedback": "Esatto! L'ippopotamo è un erbivoro."
+          }
+        ]
+      }
+    ]
+  }

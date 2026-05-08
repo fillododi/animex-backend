@@ -1,32 +1,68 @@
 {
     "id": "lion",
     "displayName": "Leone",
-    "scientificName": "Panthera Leo",
-    "aliases": ["leone"],
+    "scientificName": "Panthera leo",
+    "taxonomicClass": "Mammalia",
+    "aliases": ["leone", "leone africano", "lion"],
     "vision": {
-        "supportedLabels": [],
-        "supportedWebEntities": [],
-        "negativeLabels": [],
-        "thresholds": {
-            "minMatchScore": 0.6,
-            "strongMatchScore": 0.8,
-            "ambiguityDelta": 0.1
-        }
+      "supportedLabels": [
+        { "name": "lion", "weight": 1 },
+        { "name": "big cat", "weight": 0.75 },
+        { "name": "wildlife", "weight": 0.4 }
+      ],
+      "supportedWebEntities": [
+        { "name": "Panthera leo", "weight": 1 },
+        { "name": "Lion", "weight": 0.95 },
+        { "name": "Leone", "weight": 0.9 }
+      ],
+      "negativeLabels": ["tiger", "leopard", "cheetah", "cat", "dog"],
+      "thresholds": {
+        "minMatchScore": 0.6,
+        "strongMatchScore": 0.8,
+        "ambiguityDelta": 0.1
+      }
     },
     "habitat": {
-        "primaryHabitatId": "savannah",
-        "habitatIds": ["savannah"],
-        "summary": "Vive in Africa nella savana",
-        "climate": "Fa caldo",
-        "mapRefs": []
+      "primaryHabitatId": "savannah",
+      "habitatIds": ["savannah", "grassland", "open_woodland"],
+      "summary": "Vive soprattutto nelle savane e nelle praterie dell'Africa. Un piccolo gruppo vive anche in India.",
+      "climate": "Caldo e spesso secco, con stagioni di pioggia e stagioni asciutte.",
+      "mapRefs": ["africa", "india_gir_forest"]
     },
     "diet": {
-        "type": "carnivore",
-        "description": "Mangia la gazzella",
-        "examples":[]
+      "type": "carnivore",
+      "description": "Mangia carne. Caccia spesso in gruppo e può catturare grandi erbivori.",
+      "examples": ["zebre", "gnu", "antilopi", "bufali"]
     },
-    "facts": ["E' giallo", "Ha fame", "Ti può uccidere"],
+    "facts": [
+      "Il maschio spesso ha una grande criniera intorno alla testa.",
+      "I leoni vivono in gruppi chiamati branchi.",
+      "Il ruggito del leone può essere sentito da molto lontano.",
+      "Le leonesse sono abilissime cacciatrici."
+    ],
     "conservationStatus": "VU",
     "assets": {},
-    "quiz": []
-}
+    "quiz": [
+      {
+        "difficulty": "easy",
+        "questions": [
+          {
+            "id": "lion_q1",
+            "type": "multiple_choice",
+            "prompt": "Dove vive spesso il leone?",
+            "choices": ["Nella savana", "Sotto il ghiaccio", "In fondo al mare"],
+            "acceptedAnswers": ["Nella savana", "savana"],
+            "feedback": "Esatto! Il leone vive spesso nella savana africana.",
+            "habitatRelated": true
+          },
+          {
+            "id": "lion_q2",
+            "type": "yes_no",
+            "prompt": "Il leone è un carnivoro?",
+            "acceptedAnswers": ["sì", "si", "yes"],
+            "feedback": "Giusto! Il leone mangia carne."
+          }
+        ]
+      }
+    ]
+  }

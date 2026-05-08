@@ -1,0 +1,67 @@
+{
+    "id": "tiger",
+    "displayName": "Tigre",
+    "scientificName": "Panthera tigris",
+    "taxonomicClass": "Mammalia",
+    "aliases": ["tigre", "tiger", "tigre reale"],
+    "vision": {
+      "supportedLabels": [
+        { "name": "tiger", "weight": 1 },
+        { "name": "big cat", "weight": 0.8 },
+        { "name": "striped animal", "weight": 0.7 }
+      ],
+      "supportedWebEntities": [
+        { "name": "Panthera tigris", "weight": 1 },
+        { "name": "Tiger", "weight": 0.95 },
+        { "name": "Tigre", "weight": 0.9 }
+      ],
+      "negativeLabels": ["lion", "leopard", "cheetah", "jaguar", "cat"],
+      "thresholds": {
+        "minMatchScore": 0.6,
+        "strongMatchScore": 0.8,
+        "ambiguityDelta": 0.1
+      }
+    },
+    "habitat": {
+      "primaryHabitatId": "forest",
+      "habitatIds": ["forest", "tropical_forest", "grassland", "wetland", "mangrove"],
+      "summary": "Vive in Asia, in foreste, praterie alte, zone umide e mangrovie.",
+      "climate": "Può vivere in luoghi caldi e umidi, ma anche in zone più fredde.",
+      "mapRefs": ["asia", "india", "southeast_asia", "russian_far_east"]
+    },
+    "diet": {
+      "type": "carnivore",
+      "description": "Mangia carne e caccia da sola, muovendosi in silenzio.",
+      "examples": ["cervi", "cinghiali", "bufali", "antilopi"]
+    },
+    "facts": [
+      "Ogni tigre ha strisce diverse, come un'impronta digitale.",
+      "È il più grande felino vivente.",
+      "Ama l'acqua e sa nuotare molto bene.",
+      "Usa le strisce per nascondersi tra erba alta e ombre della foresta."
+    ],
+    "conservationStatus": "EN",
+    "assets": {},
+    "quiz": [
+      {
+        "difficulty": "easy",
+        "questions": [
+          {
+            "id": "tiger_q1",
+            "type": "multiple_choice",
+            "prompt": "Che cosa ha la tigre sul mantello?",
+            "choices": ["Strisce", "Pois blu", "Piume"],
+            "acceptedAnswers": ["Strisce", "strisce"],
+            "feedback": "Esatto! La tigre ha un mantello arancione con strisce scure."
+          },
+          {
+            "id": "tiger_q2",
+            "type": "yes_no",
+            "prompt": "La tigre sa nuotare?",
+            "acceptedAnswers": ["sì", "si", "yes"],
+            "feedback": "Giusto! La tigre è un grande felino che sa nuotare bene."
+          }
+        ]
+      }
+    ]
+  }

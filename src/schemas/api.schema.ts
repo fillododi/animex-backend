@@ -7,7 +7,8 @@ export type ErrorCode = "ROUTE_NOT_FOUND" |
     "ANIMAL_NOT_FOUND" |
     "MALFORMED_IMAGE" |
     "UNSUPPORTED_MEDIA_TYPE" |
-    "PAYLOAD_TOO_LARGE"
+    "PAYLOAD_TOO_LARGE" | 
+    "VISION_TIMEOUT"
 
 export const ApiMetaSchema = z.object({
     requestId: z.string(),

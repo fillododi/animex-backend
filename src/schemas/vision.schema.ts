@@ -4,7 +4,8 @@ const base64DataUrlRegex = /^data:(image\/jpeg|image\/png);base64,[A-Za-z0-9+/]+
 
 const rawBase64Regex = /^[A-Za-z0-9+/]+={0,2}$/
 
-export const supportedImageMimeTypes = ["image/jpeg", "image/png"] as const
+export type MimeType = "image/jpeg" | "image/png"
+export const supportedImageMimeTypes: MimeType[] = ["image/jpeg", "image/png"]
 
 export const cropSchema = z.object({
     x: z.number().int().min(0),
@@ -41,6 +42,6 @@ export const visionBodySchema = z.object({
         .optional(),
     crop: cropSchema.optional(),
     deviceHints: deviceHintsSchema.optional()
-})
+}).strict()
 
 export type VisionBody = z.infer<typeof visionBodySchema>

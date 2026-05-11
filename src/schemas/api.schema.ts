@@ -4,7 +4,10 @@ export type ErrorCode = "ROUTE_NOT_FOUND" |
     "INTERNAL_ERROR" | 
     "VALIDATION_ERROR" |
     "CORS_ORIGIN_BLOCKED" |
-    "ANIMAL_NOT_FOUND"
+    "ANIMAL_NOT_FOUND" |
+    "MALFORMED_IMAGE" |
+    "UNSUPPORTED_MEDIA_TYPE" |
+    "PAYLOAD_TOO_LARGE"
 
 export const ApiMetaSchema = z.object({
     requestId: z.string(),

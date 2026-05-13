@@ -1,5 +1,11 @@
 import { z } from "zod"
 
+export type MatchThresholds = {
+    minMatchScore: number,
+    strongMatchScore: number,
+    ambiguityDelta: number
+}
+
 export type Animal = {
     id: string,
     displayName: string,
@@ -16,11 +22,7 @@ export type Animal = {
             weight: number
         }[],
         negativeLabels: string[],
-        thresholds: {
-            minMatchScore: number,
-            strongMatchScore: number,
-            ambiguityDelta: number
-        }
+        thresholds: MatchThresholds
     },
     habitat: {
         primaryHabitatId: string,

@@ -1,9 +1,21 @@
+import { logger } from "../config/logger";
 import { Animal, MatchThresholds } from "../schemas/animal.schema";
-import { normalizeVisionText } from "../utils/normalizers";
+import { normalizeVisionSignal, normalizeVisionText } from "../utils/normalizers";
 import { catalogService } from "./catalog.service";
+import { VisionSignal } from "./vision.service";
 
 type WeightedAnimalRef = { animalId: string, weight: number }
 
+type MatchScore = {
+    animalId: string,
+    score: number,
+    matchedSignals: VisionSignal[]
+}
+
+type MatchResult = {
+    animalId?: string,
+    confidence: "LOW_CONFIDENCE" | "AMBIGUOUS" | "MATCHED_LOW_CERTAINTY" | "MATCHED"
+}
 
 export class AnimalMatcherService {
     private animalsById = new Map<string, Animal>()
@@ -77,5 +89,44 @@ export class AnimalMatcherService {
             this.addNegativeLabel(label, animal.id)
         }
         this.thresholdsByAnimalId.set(animal.id, animal.vision.thresholds)
+    }
+
+    matchAnimal(visionSignals: VisionSignal[]): MatchResult {
+        const normalizedSignals = visionSignals.map(signal => normalizeVisionSignal(signal))
+        const scores: MatchScore[] = []
+        for (const animal of this.animalsById.values()) {
+            let score = 0
+            let matchedSignals = []
+            for (const signal of normalizedSignals) {
+                if (this.aliasIndex.get(signal.text)?.has(animal.id)) {
+                    score += signal.confidence
+                    matchedSignals.push(signal)
+                }
+                const validLabels = this.labelIndex.get(signal.text)?.filter(label => label.animalId === animal.id) ?? []
+                for (const label of validLabels) {
+                    score += label.weight * signal.confidence
+                    matchedSignals.push(signal)
+                }
+                const validWebEntities = this.webEntityIndex.get(signal.text)?.filter(entity => entity.animalId === animal.id) ?? []
+                for (const entity of validWebEntities) {
+                    score += entity.weight * signal.confidence
+                    matchedSignals.push(signal)
+                }
+                if (this.negativeLabelIndex.get(signal.text)?.has(animal.id)) {
+                    score -= signal.confidence * 0.6
+                }
+            }
+            score = score / Math.max(1, matchedSignals.length)
+            logger.info({ animalId: animal.id, score, matchedSignals })
+            scores.push({ animalId: animal.id, score, matchedSignals })
+        }
+        scores.sort((a, b) => a.score - b.score)
+        const top = scores[0]
+        const second = scores[1]
+        const thresholds = this.thresholdsByAnimalId.get(top.animalId)
+        if(!top || top.score < (thresholds?.minMatchScore ?? 0.6)) return { confidence: "LOW_CONFIDENCE" };
+        if(second && top.score - second.score  < (thresholds?.ambiguityDelta ?? 0.1)) return { animalId: top.animalId, confidence: "AMBIGUOUS" };
+        if(top.score >= (thresholds?.strongMatchScore ?? 0.9)) return { animalId: top.animalId, confidence: "MATCHED" };
+        return { animalId: top.animalId, confidence: "MATCHED_LOW_CERTAINTY" }
     }
 }

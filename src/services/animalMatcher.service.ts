@@ -25,10 +25,6 @@ export class AnimalMatcherService {
     private negativeLabelIndex = new Map<string, Set<string>>()
     private thresholdsByAnimalId = new Map<string, MatchThresholds>()
 
-    constructor() {
-        this.rebuildIndexes()
-    }
-
     private clearIndexes() {
         this.animalsById.clear()
         this.aliasIndex.clear()
@@ -38,7 +34,7 @@ export class AnimalMatcherService {
         this.thresholdsByAnimalId.clear()
     }
 
-    private rebuildIndexes() {
+    rebuildIndexes() {
         this.clearIndexes()
         const animals = catalogService.getAnimals()
         for (const animal of animals) {
@@ -71,6 +67,7 @@ export class AnimalMatcherService {
     }
 
     private indexAnimal(animal: Animal) {
+        logger.info({ animalId: animal.id }, "indexing animal")
         this.animalsById.set(animal.id, animal)
         this.addAlias(animal.displayName, animal.id)
         this.addAlias(animal.scientificName, animal.id)
@@ -117,16 +114,20 @@ export class AnimalMatcherService {
                 }
             }
             score = score / Math.max(1, matchedSignals.length)
-            logger.info({ animalId: animal.id, score, matchedSignals })
+            if (score <= 0) continue;
+            logger.info({ animalId: animal.id, score, matchedSignals }, "animal match score")
             scores.push({ animalId: animal.id, score, matchedSignals })
         }
-        scores.sort((a, b) => a.score - b.score)
+        scores.sort((a, b) => b.score - a.score)
         const top = scores[0]
+        if(!top) return { confidence: "LOW_CONFIDENCE" }
         const second = scores[1]
         const thresholds = this.thresholdsByAnimalId.get(top.animalId)
-        if(!top || top.score < (thresholds?.minMatchScore ?? 0.6)) return { confidence: "LOW_CONFIDENCE" };
+        if(top.score < (thresholds?.minMatchScore ?? 0.6)) return { animalId: top.animalId, confidence: "LOW_CONFIDENCE" };
         if(second && top.score - second.score  < (thresholds?.ambiguityDelta ?? 0.1)) return { animalId: top.animalId, confidence: "AMBIGUOUS" };
         if(top.score >= (thresholds?.strongMatchScore ?? 0.9)) return { animalId: top.animalId, confidence: "MATCHED" };
         return { animalId: top.animalId, confidence: "MATCHED_LOW_CERTAINTY" }
     }
 }
+
+export const animalMatcherService = new AnimalMatcherService()

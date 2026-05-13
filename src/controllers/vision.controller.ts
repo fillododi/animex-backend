@@ -3,6 +3,10 @@ import { MimeType, supportedImageMimeTypes, VisionBody } from "../schemas/vision
 import { Request, Response } from "express"
 import { ENV } from "../config/env"
 import { visionService } from "../services/vision.service"
+import { normalizeVisionSignal } from "../utils/normalizers"
+import { animalMatcherService } from "../services/animalMatcher.service"
+import { success } from "../schemas/api.schema"
+import { catalogService } from "../services/catalog.service"
 
 type DecodedImage = {
     buffer: Buffer;
@@ -92,7 +96,13 @@ function decodeAndValidateImage(imageBase64: string, mimeType: string, maxImageB
 async function identify(req: Request, res: Response) {
     const body: VisionBody = req.body
     const validatedImage = decodeAndValidateImage(body.imageBase64, body.mimeType, ENV.MAX_IMAGE_BYTES)
-    const response = await visionService.analyzeImage(validatedImage.buffer, validatedImage.mimeType, req.requestId, ENV.VISION_TIMEOUT_MS)
+    const response = await visionService.analyzeImage(validatedImage.buffer, ENV.VISION_TIMEOUT_MS)
+    const signals = response.signals.map(signal => normalizeVisionSignal(signal))
+    const match = animalMatcherService.matchAnimal(signals)
+    const status = match.confidence
+    if (!match.animalId) return res.status(200).json(success(req.requestId, { status }));
+    const animal = catalogService.getAnimalById(match.animalId)
+    return res.status(200).json(success(req.requestId, { status, selectedAnimal: { id: match.animalId, displayName: animal.displayName } }))
 }
 
 export const visionController = { identify }

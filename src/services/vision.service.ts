@@ -35,8 +35,6 @@ function getVisionStatus() {
 
 async function analyzeImage(
     imageBytes: Buffer, 
-    mimeType: MimeType, 
-    requestId: string, 
     timeoutMs?: number
 ): Promise<VisionAnalysisResult> {
     const controller = new AbortController()

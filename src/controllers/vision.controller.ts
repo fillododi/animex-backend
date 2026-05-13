@@ -102,7 +102,10 @@ async function identify(req: Request, res: Response) {
     const status = match.confidence
     if (!match.animalId) return res.status(200).json(success(req.requestId, { status }));
     const animal = catalogService.getAnimalById(match.animalId)
-    return res.status(200).json(success(req.requestId, { status, selectedAnimal: { id: match.animalId, displayName: animal.displayName } }))
+    return res.status(200).json(success(req.requestId, { 
+        status, 
+        selectedAnimal: { id: match.animalId, displayName: animal.displayName, boundingPoly: match.boundingPoly } 
+    }))
 }
 
 export const visionController = { identify }

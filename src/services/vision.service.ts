@@ -1,22 +1,23 @@
 import { ENV } from "../config/env";
-import { MimeType } from "../schemas/vision.schema";
 import { AppError } from "../middleware/errorHandler";
 import { normalizeVisionSignal } from "../utils/normalizers";
+
+export type BoundingPoly = {
+    vertices?: {
+        x: number,
+        y: number
+    }[],
+    normalizedVertices?: {
+        x: number,
+        y: number
+    }[]
+}
 
 export type VisionSignal = {
     source: "label" | "localizedObject" | "webEntity" | "bestGuess"
     text: string
     confidence: number
-    boundingPoly?: {
-        vertices?: {
-            x: number,
-            y: number
-        }[],
-        normalizedVertices?: {
-            x: number,
-            y: number
-        }[]
-    }[]
+    boundingPoly?: BoundingPoly
 }
 
 type VisionAnalysisResult = {

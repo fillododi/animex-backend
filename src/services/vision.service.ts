@@ -1,6 +1,7 @@
 import { ENV } from "../config/env";
 import { MimeType } from "../schemas/vision.schema";
 import { AppError } from "../middleware/errorHandler";
+import { normalizeVisionSignal } from "../utils/normalizers";
 
 export type VisionSignal = {
     source: "label" | "localizedObject" | "webEntity" | "bestGuess"
@@ -83,23 +84,23 @@ async function analyzeImage(
                 }
             }
         }
-        const labelSignals: VisionSignal[] = responseData.labelAnnotations?.map((label: any) => ({
+        const labelSignals: VisionSignal[] = responseData.labelAnnotations?.map((label: any) => normalizeVisionSignal({
             source: "label",
             text: String(label.description ?? ""),
             confidence: Number(label.score ?? 0)
         })).filter((signal: VisionSignal) => signal.text.length > 0) ?? []
-        const objectSignals: VisionSignal[] = responseData.localizedObjectAnnotations?.map((object: any) => ({
+        const objectSignals: VisionSignal[] = responseData.localizedObjectAnnotations?.map((object: any) => normalizeVisionSignal({
             source: "localizedObject",
             text: String(object.name ?? ""),
             confidence: Number(object.score ?? 0),
             boundingPoly: object.boundingPoly ?? []
         })).filter((signal: VisionSignal) => signal.text.length > 0) ?? []
-        const webEntitiesSignals: VisionSignal[] = responseData.webDetection.webEntities?.map((entity: any) => ({
+        const webEntitiesSignals: VisionSignal[] = responseData.webDetection.webEntities?.map((entity: any) => normalizeVisionSignal({
             source: "webEntity",
             text: String(entity.description ?? ""),
             confidence: Number(entity.score ?? 0)
         })).filter((signal: VisionSignal) => signal.text.length > 0) ?? []
-        const bestGuessSignals: VisionSignal[] = responseData.webDetection.bestGuessLabels?.map((label: any) => ({
+        const bestGuessSignals: VisionSignal[] = responseData.webDetection.bestGuessLabels?.map((label: any) => normalizeVisionSignal({
             source: "bestGuess",
             text: String(label.label ?? ""),
             confidence: 0.5

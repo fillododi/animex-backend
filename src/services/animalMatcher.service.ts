@@ -50,6 +50,14 @@ export class AnimalMatcherService {
         index.set(key, current)
     }
 
+    private addNegativeLabel(rawLabel: string, animalId: string) {
+        const key = normalizeVisionText(rawLabel)
+        if(!key) return;
+        const current = this.negativeLabelIndex.get(key) ?? new Set<string>()
+        current.add(animalId)
+        this.negativeLabelIndex.set(key, current)
+    }
+
     private indexAnimal(animal: Animal) {
         this.animalsById.set(animal.id, animal)
         this.addAlias(animal.displayName, animal.id)
@@ -66,9 +74,7 @@ export class AnimalMatcherService {
             this.addAlias(entity.name, animal.id)
         }
         for (const label of animal.vision.negativeLabels) {
-            const current = this.negativeLabelIndex.get(label) ?? new Set<string>()
-            current.add(animal.id)
-            this.negativeLabelIndex.set(label, current)
+            this.addNegativeLabel(label, animal.id)
         }
         this.thresholdsByAnimalId.set(animal.id, animal.vision.thresholds)
     }

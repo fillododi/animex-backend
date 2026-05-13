@@ -2,19 +2,21 @@ import { logger } from "../config/logger";
 import { Animal, MatchThresholds } from "../schemas/animal.schema";
 import { normalizeVisionSignal, normalizeVisionText } from "../utils/normalizers";
 import { catalogService } from "./catalog.service";
-import { VisionSignal } from "./vision.service";
+import { BoundingPoly, VisionSignal } from "./vision.service";
 
 type WeightedAnimalRef = { animalId: string, weight: number }
 
 type MatchScore = {
     animalId: string,
     score: number,
-    matchedSignals: VisionSignal[]
+    matchedSignals: VisionSignal[],
+    boundingPoly: BoundingPoly
 }
 
 type MatchResult = {
     animalId?: string,
-    confidence: "LOW_CONFIDENCE" | "AMBIGUOUS" | "MATCHED_LOW_CERTAINTY" | "MATCHED"
+    confidence: "LOW_CONFIDENCE" | "AMBIGUOUS" | "MATCHED_LOW_CERTAINTY" | "MATCHED",
+    boundingPoly?: BoundingPoly
 }
 
 export class AnimalMatcherService {
@@ -94,6 +96,7 @@ export class AnimalMatcherService {
         for (const animal of this.animalsById.values()) {
             let score = 0
             let matchedSignals = []
+            const boundingPoly: BoundingPoly = {}
             for (const signal of normalizedSignals) {
                 if (this.aliasIndex.get(signal.text)?.has(animal.id)) {
                     score += signal.confidence
@@ -103,6 +106,10 @@ export class AnimalMatcherService {
                 for (const label of validLabels) {
                     score += label.weight * signal.confidence
                     matchedSignals.push(signal)
+                    if (signal.boundingPoly) {
+                        if (signal.boundingPoly.normalizedVertices) boundingPoly.normalizedVertices = signal.boundingPoly.normalizedVertices;
+                        if (signal.boundingPoly.vertices) boundingPoly.vertices = signal.boundingPoly.vertices;
+                    }
                 }
                 const validWebEntities = this.webEntityIndex.get(signal.text)?.filter(entity => entity.animalId === animal.id) ?? []
                 for (const entity of validWebEntities) {
@@ -115,18 +122,24 @@ export class AnimalMatcherService {
             }
             score = score / Math.max(1, matchedSignals.length)
             if (score <= 0) continue;
-            logger.info({ animalId: animal.id, score, matchedSignals }, "animal match score")
-            scores.push({ animalId: animal.id, score, matchedSignals })
+            logger.info({ animalId: animal.id, score, matchedSignals, boundingPoly }, "animal match score")
+            scores.push({ animalId: animal.id, score, matchedSignals, boundingPoly })
         }
         scores.sort((a, b) => b.score - a.score)
         const top = scores[0]
         if(!top) return { confidence: "LOW_CONFIDENCE" }
         const second = scores[1]
         const thresholds = this.thresholdsByAnimalId.get(top.animalId)
-        if(top.score < (thresholds?.minMatchScore ?? 0.6)) return { animalId: top.animalId, confidence: "LOW_CONFIDENCE" };
-        if(second && top.score - second.score  < (thresholds?.ambiguityDelta ?? 0.1)) return { animalId: top.animalId, confidence: "AMBIGUOUS" };
-        if(top.score >= (thresholds?.strongMatchScore ?? 0.9)) return { animalId: top.animalId, confidence: "MATCHED" };
-        return { animalId: top.animalId, confidence: "MATCHED_LOW_CERTAINTY" }
+        if(top.score < (thresholds?.minMatchScore ?? 0.6)) {
+            return { animalId: top.animalId, confidence: "LOW_CONFIDENCE", boundingPoly: top.boundingPoly }
+        }
+        if(second && top.score - second.score  < (thresholds?.ambiguityDelta ?? 0.1)) {
+            return { animalId: top.animalId, confidence: "AMBIGUOUS", boundingPoly: top.boundingPoly }
+        }
+        if(top.score >= (thresholds?.strongMatchScore ?? 0.9)) {
+            return { animalId: top.animalId, confidence: "MATCHED", boundingPoly: top.boundingPoly }
+        }
+        return { animalId: top.animalId, confidence: "MATCHED_LOW_CERTAINTY", boundingPoly: top.boundingPoly }
     }
 }
 

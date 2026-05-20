@@ -65,3 +65,5 @@ Answer as Animex.
         )
     }
 }
+
+export const chatService = new ChatService()

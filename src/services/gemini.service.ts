@@ -3,7 +3,7 @@ import { AppError } from "../middleware/errorHandler";
 
 type GeminiRole = "user" | "model"
 
-interface GeminiMessage {
+export interface GeminiMessage {
     role: GeminiRole,
     text: string
 }

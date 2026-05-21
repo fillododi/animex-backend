@@ -71,7 +71,9 @@ Facts: ${animal.facts.join(' | ')}
 Conservation: ${animal.conservationStatus ?? 'No conservation summary available.'}
 
 User context:
-Locale: Italian
+${input.inputMode? `Input mode: ${input.inputMode}`: ""}
+Locale: ${input.locale ?? "it-IT"}
+Age band: ${input.ageBand ?? "general"}
 `.trim()
         )
     }

@@ -10,7 +10,10 @@ export const chatBodySchema = z.object({
     history: z.array(z.object({
         role: z.enum(["user", "model"]),
         text: z.string().min(1)
-    })).max(8)
+    })).max(8),
+    inputMode: z.enum(["text", "voice"]).optional(),
+    locale: z.string().min(1).max(5).optional(),
+    ageBand: z.enum(["child", "teen", "general"]).optional()
 })
 
 export type ChatBody = z.infer<typeof chatBodySchema>

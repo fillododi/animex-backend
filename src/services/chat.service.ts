@@ -16,7 +16,8 @@ interface ChatResponse {
         filtered: boolean,
         reason?: string
     },
-    suggestedActions: ChatSuggestedAction[]
+    suggestedActions: ChatSuggestedAction[],
+    fallbackReason?: string
 }
 
 class ChatService {
@@ -42,19 +43,23 @@ class ChatService {
         }
         const systemInstruction = this.buildSystemInstruction(animal, input)
         const prompt = this.buildUserPrompt(input.message)
-        const result = await geminiService.generateText(prompt, {
-            systemInstruction,
-            history: input.history,
-            temperature: this.temperatureForAgeBand(input.ageBand),
-            maxOutputTokens: this.isAdult(input.ageBand)? 420: 260
-        })
-        const safeAnswer = this.postProcessAnswer(result.text, animal, input)
-        return {
-            answer: safeAnswer,
-            animalId: animal.id,
-            source: "gemini",
-            safety: { filtered: false },
-            suggestedActions: this.getSuggestedActions(input.message, animal)
+        try {
+            const result = await geminiService.generateText(prompt, {
+                systemInstruction,
+                history: input.history,
+                temperature: this.temperatureForAgeBand(input.ageBand),
+                maxOutputTokens: this.isAdult(input.ageBand)? 420: 260
+            })
+            const safeAnswer = this.postProcessAnswer(result.text, animal, input)
+            return {
+                answer: safeAnswer,
+                animalId: animal.id,
+                source: "gemini",
+                safety: { filtered: false },
+                suggestedActions: this.getSuggestedActions(input.message, animal)
+            }
+        } catch (error) {
+            return this.buildFallbackResponse(animal, input.message, error)
         }
     }
 
@@ -147,6 +152,55 @@ Answer as Animex.
         if(habitatSuggestions.some(suggestion => normalized.includes(suggestion))) actions.add("showHabitat");
         if(animal.quiz?.length) actions.add("askQuiz");
         return [...actions]
+    }
+
+    private buildFallbackResponse(animal: Animal, message: string, error: unknown): ChatResponse {
+        const answer = this.buildDeterministicFallbackAnswer(animal, message)
+        return { 
+            answer, 
+            animalId: animal.id, 
+            source: "fallback", 
+            safety: { filtered: false }, 
+            suggestedActions: this.getSuggestedActions(message, animal),
+            fallbackReason: this.getFallbackReason(error)
+        }
+    }
+
+    private buildDeterministicFallbackAnswer(animal: Animal, message: string): string {
+        const normalized = this.normalizeForMatching(message)
+        const habitatSuggestions = ["dove", "vive", "habitat", "casa"]
+        const dietSuggestions = ["mangia", "cibo", "dieta", "fame", "caccia", "preda"]
+        const behaviorSuggestions = ["fa", "comportamento", "dorme", "muove", "gruppo", "famiglia"]
+        const appearanceSuggestions = ["sembra", "aspetto", "colore", "grande", "dimensione", "maschio", "femmina"]
+        const appearanceFactLookupKeys = ["sembra", "colore", "maschio", "femmina", "pelliccia", "strisce", "macchie", "piume"]
+        const dangerSuggestions = ["pericolo", "sicuro", "toccare", "nutrire", "vicino", "avvicinare"]
+        const conservationSuggestions = ["conservazione", "pericolo", "minaccia", "protetto", "protetta", "vulnerabile", "estinto", "estinta"]
+        const factSuggestions = ["fatto", "curiosità", "interessante", "divertente", "curioso"]
+        if(habitatSuggestions.some(suggestion => normalized.includes(suggestion))) return `${animal.displayName} solitamente ${animal.habitat.summary}`;
+        if(dietSuggestions.some(suggestion => normalized.includes(suggestion))) return animal.diet.description;
+        if(behaviorSuggestions.some(suggestion => normalized.includes(suggestion))) {
+            const fact = animal.facts[0]
+            return `${animal.displayName} è molto interessante: ${fact}`
+        }
+        if(appearanceSuggestions.some(suggestion => normalized.includes(suggestion))) {
+            const appearanceFact = animal.facts.find(fact => appearanceFactLookupKeys.some(key => this.normalizeForMatching(fact).includes(key))) ?? 
+                animal.facts[0]
+            return appearanceFact ?? this.genericFallback(animal)
+        }
+        if(dangerSuggestions.some(suggestion => normalized.includes(suggestion))) {
+            return `Meglio guardare ${animal.displayName} da una distanza di sicurezza`
+        }
+        if(conservationSuggestions.some(suggestion => normalized.includes(suggestion))) {
+            return `Lo stato di conservazione di ${animal.displayName} è ${animal.conservationStatus}`
+        }
+        if(factSuggestions.some(suggestion => normalized.includes(suggestion))) return `Ecco una curiosità: ${animal.facts[0]}`;
+        return this.genericFallback(animal)
+    }
+
+    private getFallbackReason(error: unknown): string {
+        if (error instanceof AppError) return error.code;
+        if (error instanceof Error) return error.name;
+        return "UNKNOWN_ERROR"
     }
 }
 

@@ -10,7 +10,7 @@ async function postChat(req: Request, res: Response) {
     body.message = normalizeMessage(body.message)
     body.history = normalizeHistory(body.history)
     const data = await chatService.answerQuestion(body)
-    return res.status(200).json(success(req.requestId, { data }))
+    return res.status(200).json(success(req.requestId, data))
 }
 
 function normalizeMessage(message: string): string {

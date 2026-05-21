@@ -6,6 +6,8 @@ import { geminiService } from "./gemini.service";
 
 type ChatSource = "gemini" | "fallback"
 
+type ChatSuggestedAction = "showHabitat" | "askQuiz" | "useTextInput"
+
 interface ChatResponse {
     answer: string,
     animalId: string,
@@ -13,7 +15,8 @@ interface ChatResponse {
     safety: {
         filtered: boolean,
         reason?: string
-    }
+    },
+    suggestedActions: ChatSuggestedAction[]
 }
 
 class ChatService {
@@ -29,7 +32,13 @@ class ChatService {
         }
         const safetyCheck = this.checkUnsafeUserMessage(input.message)
         if(safetyCheck.blocked) {
-            return { answer: safetyCheck.answer, animalId: animal.id, source: "fallback", safety: { filtered: true, reason: safetyCheck.reason } }
+            return { 
+                answer: safetyCheck.answer, 
+                animalId: animal.id, 
+                source: "fallback", 
+                safety: { filtered: true, reason: safetyCheck.reason } ,
+                suggestedActions: ["askQuiz"]
+            }
         }
         const systemInstruction = this.buildSystemInstruction(animal, input)
         const prompt = this.buildUserPrompt(input.message)
@@ -44,7 +53,8 @@ class ChatService {
             answer: safeAnswer,
             animalId: animal.id,
             source: "gemini",
-            safety: { filtered: false }
+            safety: { filtered: false },
+            suggestedActions: this.getSuggestedActions(input.message, animal)
         }
     }
 
@@ -128,6 +138,15 @@ Answer as Animex.
 
     private genericFallback(animal: Animal): string {
         return `So che questo è un ${animal.displayName}. ${animal.facts[0] ?? ""}`
+    }
+
+    private getSuggestedActions(message: string, animal: Animal): ChatSuggestedAction[] {
+        const normalized = this.normalizeForMatching(message)
+        const actions = new Set<ChatSuggestedAction>()
+        const habitatSuggestions = ["dove", "vive", "habitat", "casa", "savana", "foresta", "giungla", "deserto", "acqua"]
+        if(habitatSuggestions.some(suggestion => normalized.includes(suggestion))) actions.add("showHabitat");
+        if(animal.quiz?.length) actions.add("askQuiz");
+        return [...actions]
     }
 }
 

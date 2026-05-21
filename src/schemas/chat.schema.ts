@@ -1,5 +1,7 @@
 import z from "zod";
 
+export const ageBandSchema = z.enum(["child", "teen", "general"]).optional()
+
 export const chatBodySchema = z.object({
     sessionId: z.string()
             .min(1)
@@ -13,7 +15,8 @@ export const chatBodySchema = z.object({
     })).max(8),
     inputMode: z.enum(["text", "voice"]).optional(),
     locale: z.string().min(1).max(5).optional(),
-    ageBand: z.enum(["child", "teen", "general"]).optional()
+    ageBand: ageBandSchema
 })
 
+export type AgeBand = z.infer<typeof ageBandSchema>
 export type ChatBody = z.infer<typeof chatBodySchema>

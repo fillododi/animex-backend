@@ -1,6 +1,6 @@
 import { AppError } from "../middleware/errorHandler";
 import { Animal } from "../schemas/animal.schema";
-import { ChatBody } from "../schemas/chat.schema";
+import { AgeBand, ChatBody } from "../schemas/chat.schema";
 import { catalogService } from "./catalog.service";
 import { geminiService } from "./gemini.service";
 
@@ -36,7 +36,8 @@ class ChatService {
         const result = await geminiService.generateText(prompt, {
             systemInstruction,
             history: input.history,
-            maxOutputTokens: 420
+            temperature: this.temperatureForAgeBand(input.ageBand),
+            maxOutputTokens: !(input.ageBand === "teen" || input.ageBand === "child")? 420: 260
         })
         return {
             answer: result.text,
@@ -100,6 +101,12 @@ Answer as Animex.
 
     private normalizeForMatching(text: string): string {
         return text.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, '').replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim()
+    }
+
+    private temperatureForAgeBand(ageband?: AgeBand): number {
+        if (ageband === "child") return 0.3;
+        if (ageband === "teen") return 0.35;
+        return 0.4;
     }
 }
 

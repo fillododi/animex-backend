@@ -70,7 +70,7 @@ class GeminiService {
         const controller = new AbortController()
         const timeoutMs = options.timeoutMs ?? this.defaultTimeoutMs
         const timeout = setTimeout(() => controller.abort(), timeoutMs)
-        const url = `${this.baseUrl}/models/${encodeURIComponent(this.model)}:generateContent$key=${encodeURIComponent(this.apiKey)}`
+        const url = `${this.baseUrl}/models/${encodeURIComponent(this.model)}:generateContent`
         const body = { 
             systemInstruction: options.systemInstruction? { parts: [{ text: options.systemInstruction }] }: undefined,
             contents: this.buildContents(prompt, options.history),
@@ -80,7 +80,10 @@ class GeminiService {
             }
         }
         try {
-            const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+            const response = await fetch(
+                url, 
+                { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": this.apiKey }, body: JSON.stringify(body) }
+            )
             if(!response.ok) await this.handleBadResponse(response);
             return (await response.json()) as GeminiApiResponse
         } catch (error) {

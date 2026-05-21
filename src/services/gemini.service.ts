@@ -135,4 +135,4 @@ class GeminiService {
     }
 }
 
-export const geminiService = new GeminiService({ apiKey: ENV.GEMINI_API_KEY })
+export const geminiService = new GeminiService({ apiKey: ENV.GEMINI_API_KEY, defaultTimeoutMs: ENV.GEMINI_TIMEOUT_MS })

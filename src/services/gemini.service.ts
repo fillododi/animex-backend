@@ -51,7 +51,7 @@ class GeminiService {
             throw new AppError({ statusCode: 500, code: "SERVICE_UNAVAILABLE", message: "Gemini config error", details: "GEMINI_API_KEY is missing" })
         }
         this.apiKey = config.apiKey
-        this.model = config.model ?? "gemini-2.0-flash"
+        this.model = config.model ?? "gemini-3.5-flash"
         this.baseUrl = config.baseUrl ?? "https://generativelanguage.googleapis.com/v1beta"
         this.defaultTimeoutMs = config.defaultTimeoutMs ?? 3000
     }
@@ -76,7 +76,10 @@ class GeminiService {
             contents: this.buildContents(prompt, options.history),
             generationConfig: {
                 temperature: options.temperature ?? 0.4,
-                maxOutputTokens: options.maxOutputTokens ?? 512
+                maxOutputTokens: options.maxOutputTokens ?? 512,
+                thinkingConfig: {
+                    thinkingBudget: 16
+                }
             }
         }
         try {
@@ -133,6 +136,8 @@ class GeminiService {
         if (candidate.finishReason === "SAFETY") {
             throw new AppError({ statusCode: 502, code: "VALIDATION_ERROR", message: "Gemini blocked the responses for safety reasons" })
         }
+        console.log(candidate.content)
+        console.log(candidate.finishReason)
         const text = candidate.content?.parts?.map(part => part.text ?? "").join("").trim() ?? ""
         return text
     }

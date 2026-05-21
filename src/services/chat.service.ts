@@ -37,10 +37,11 @@ class ChatService {
             systemInstruction,
             history: input.history,
             temperature: this.temperatureForAgeBand(input.ageBand),
-            maxOutputTokens: !(input.ageBand === "teen" || input.ageBand === "child")? 420: 260
+            maxOutputTokens: this.isAdult(input.ageBand)? 420: 260
         })
+        const safeAnswer = this.postProcessAnswer(result.text, animal, input)
         return {
-            answer: result.text,
+            answer: safeAnswer,
             animalId: animal.id,
             source: "gemini",
             safety: { filtered: false }
@@ -48,7 +49,7 @@ class ChatService {
     }
 
     private buildSystemInstruction(animal: Animal, input: ChatBody): string {
-        const maxAnswerSentences = 5
+        const maxAnswerSentences = this.isAdult(input.ageBand)? 5: 3
         return(
 `You are Animex, a friendly wildlife guide for children at a zoo.
 Rules:
@@ -90,6 +91,10 @@ Answer as Animex.
         )
     }
 
+    private isAdult(ageband?: AgeBand): boolean {
+        return !ageband || ageband === "general"
+    }
+
     private checkUnsafeUserMessage(message: string): { blocked: boolean, answer: string, reason?: string } {
         const normalized = this.normalizeForMatching(message)
         const unsafeWords = ["toccare", "nutrire", "spaventare", "inseguire", "cavalcare", "lanciare", "lottare", "combattere"]
@@ -107,6 +112,22 @@ Answer as Animex.
         if (ageband === "child") return 0.3;
         if (ageband === "teen") return 0.35;
         return 0.4;
+    }
+
+    private postProcessAnswer(answer: string, animal: Animal, input: ChatBody): string {
+        const trimmed = answer.trim().replace(/\s+/g, ' ')
+        const maxSentences = this.isAdult(input.ageBand)? 5: 3
+        return this.limitSentences(trimmed, maxSentences) || this.genericFallback(animal)
+    }
+
+    private limitSentences(text: string, maxSentences: number): string {
+        const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)
+        if(!sentences) return text;
+        return sentences.slice(0, maxSentences).join(' ').trim()
+    }
+
+    private genericFallback(animal: Animal): string {
+        return `So che questo è un ${animal.displayName}. ${animal.facts[0] ?? ""}`
     }
 }
 

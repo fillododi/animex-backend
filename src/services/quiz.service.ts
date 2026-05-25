@@ -25,14 +25,14 @@ class QuizService {
         const curatedQuestion = this.selectCuratedQuestion(animal, input.previousQuestionIds ?? [], input.mode ?? "animal", input.difficulty)
         if(curatedQuestion) {
             return { 
-                question: this.toPublicQuestion(curatedQuestion), 
+                question: curatedQuestion, 
                 source: "curated" 
             }
         }
         const generatedQuestion = await this.generateQuestion(animal, input.mode ?? "animal", input.difficulty)
         if(generatedQuestion) {
             return { 
-                question: this.toPublicQuestion(generatedQuestion),
+                question: generatedQuestion,
                 source: "gemini"
             }
         }
@@ -94,18 +94,6 @@ Rules:
             return question
         } catch {
             return null
-        }
-    }
-
-    private toPublicQuestion(question: QuizQuestion): QuizQuestion {
-        return {
-            id: question.id,
-            type: question.type,
-            prompt: question.prompt,
-            ...(question.choices? { choices: question.choices }: {}),
-            feedback: question.feedback,
-            ...(question.habitatRelated? { habitatRelated: question.habitatRelated }: {}),
-            ...(question.acceptedAnswer? { acceptedAnswer: question.acceptedAnswer }: {})
         }
     }
 

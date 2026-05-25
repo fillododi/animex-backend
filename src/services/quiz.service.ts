@@ -74,16 +74,17 @@ Return only JSON with this shape:
   "prompt": string,
   "choices"?: string[],
   "acceptedAnswer"?: string | boolean,
-  "feedback": string
+  "feedback": string,
+  "habitatRelated"?: boolean
 }
 choices is defined when type is "multiple_choice"
 answer is not defined when type is "open_text", a string when type is "multiple_choice", a boolean when type is "yes_no"
+habitatRelated depends on Mode, which can either be animal or habitat
 
 Rules:
 - The question must be answerable from the context.
 - Keep the prompt short.
 - Use Italian.
-- For multiple_choice, provide exactly 3 choices.
 - Do not invent facts.
 `.trim()
         try {
@@ -105,7 +106,8 @@ Rules:
             type: question.type,
             prompt: question.prompt,
             ...(question.choices? { choices: question.choices }: {}),
-            feedback: question.feedback
+            feedback: question.feedback,
+            ...(question.habitatRelated? { habitatRelated: question.habitatRelated }: {})
         }
     }
 

@@ -16,6 +16,10 @@ interface GenerateTextOptions {
     timeoutMs?: number
 }
 
+interface GenerateJsonOptions extends GenerateTextOptions {
+    schemaName?: string
+}
+
 interface GeminiUsage {
     promptTokenCount?: number,
     candidatesTokenCount?: number,
@@ -64,6 +68,26 @@ class GeminiService {
         const response = await this.callGemini(prompt, options)
         const text = this.extractText(response)
         return { text, model: this.model, usage: response.usageMetadata }
+    }
+
+    async generateJson<T>(prompt: string, options: GenerateJsonOptions = {}): Promise<T> {
+        const jsonPrompt = [
+            prompt, 
+            "", 
+            "Return ONLY valid JSON.", 
+            "Do not wrap the JSON in markdown.", 
+            "Do not include explanations before or after the JSON."
+        ].join("\n")
+        const result = await this.generateText(jsonPrompt, { ...options, temperature: options.temperature ?? 0.2 })
+        try {
+            return JSON.parse(this.stripJsonCodeFence(result.text)) as T;
+        } catch (error) {
+            throw new AppError({
+                statusCode: 502,
+                code: "VALIDATION_ERROR",
+                message: "Gemini returned invalid JSON"
+            })
+        }
     }
 
     private async callGemini(prompt: string, options: GenerateTextOptions): Promise<GeminiApiResponse> {
@@ -140,6 +164,10 @@ class GeminiService {
         console.log(candidate.finishReason)
         const text = candidate.content?.parts?.map(part => part.text ?? "").join("").trim() ?? ""
         return text
+    }
+
+    private stripJsonCodeFence(text: string): string {
+        return text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim()
     }
 }
 

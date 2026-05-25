@@ -51,7 +51,7 @@
             "type": "multiple_choice",
             "prompt": "Dove vive spesso il leone?",
             "choices": ["Nella savana", "Sotto il ghiaccio", "In fondo al mare"],
-            "acceptedAnswers": ["Nella savana", "savana"],
+            "acceptedAnswer": "Nella savana",
             "feedback": "Esatto! Il leone vive spesso nella savana africana.",
             "habitatRelated": true
           },
@@ -59,7 +59,7 @@
             "id": "lion_q2",
             "type": "yes_no",
             "prompt": "Il leone è un carnivoro?",
-            "acceptedAnswers": ["sì", "si", "yes"],
+            "acceptedAnswer": true,
             "feedback": "Giusto! Il leone mangia carne."
           }
         ]

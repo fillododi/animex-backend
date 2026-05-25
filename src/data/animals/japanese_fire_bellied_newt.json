@@ -57,7 +57,7 @@
             "type": "multiple_choice",
             "prompt": "Di che colore è spesso la pancia di questo tritone?",
             "choices": ["Rossa o arancione", "Blu brillante", "Bianca a pois verdi"],
-            "acceptedAnswers": ["Rossa o arancione", "rossa", "arancione"],
+            "acceptedAnswer": "Rossa o arancione",
             "feedback": "Esatto! Il suo ventre può essere rosso o arancione acceso."
           },
           {
@@ -65,7 +65,7 @@
             "type": "multiple_choice",
             "prompt": "Dove vive spesso il tritone giapponese dal ventre di fuoco?",
             "choices": ["In stagni e zone umide", "Nel deserto", "Sulle cime innevate"],
-            "acceptedAnswers": ["In stagni e zone umide", "stagni", "zone umide"],
+            "acceptedAnswer": "In stagni e zone umide",
             "feedback": "Giusto! Ama stagni, paludi e altri ambienti umidi.",
             "habitatRelated": true
           }

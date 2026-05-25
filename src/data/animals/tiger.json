@@ -51,14 +51,14 @@
             "type": "multiple_choice",
             "prompt": "Che cosa ha la tigre sul mantello?",
             "choices": ["Strisce", "Pois blu", "Piume"],
-            "acceptedAnswers": ["Strisce", "strisce"],
+            "acceptedAnswer": "Strisce",
             "feedback": "Esatto! La tigre ha un mantello arancione con strisce scure."
           },
           {
             "id": "tiger_q2",
             "type": "yes_no",
             "prompt": "La tigre sa nuotare?",
-            "acceptedAnswers": ["sì", "si", "yes"],
+            "acceptedAnswes": true,
             "feedback": "Giusto! La tigre è un grande felino che sa nuotare bene."
           }
         ]

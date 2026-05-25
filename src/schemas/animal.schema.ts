@@ -51,7 +51,7 @@ export type Animal = {
             type: "multiple_choice" | "yes_no" | "open_text",
             prompt: string,
             choices?: string[],
-            acceptedAnswers: string[],
+            acceptedAnswer?: string | boolean,
             feedback: string,
             habitatRelated?: boolean
         }[]
@@ -109,7 +109,7 @@ export const AnimalSchema = z.object({
             type: z.enum(["multiple_choice", "yes_no", "open_text"]),
             prompt: z.string().trim().min(1),
             choices: z.array(z.string().trim().min(1)).optional(),
-            acceptedAnswers: z.array(z.string().trim().min(1)),
+            acceptedAnswer: z.union([z.string().trim().min(1), z.boolean()]).optional(),
             feedback: z.string().trim().min(1),
             habitatRelated: z.boolean().optional()
         }))

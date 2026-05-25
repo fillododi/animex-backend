@@ -51,7 +51,7 @@
             "type": "multiple_choice",
             "prompt": "Dove passa molto tempo l'ippopotamo?",
             "choices": ["In acqua", "Sugli alberi", "Sulla neve"],
-            "acceptedAnswers": ["In acqua", "acqua"],
+            "acceptedAnswer": "In acqua",
             "feedback": "Bravo! L'ippopotamo passa molto tempo in fiumi, laghi e paludi.",
             "habitatRelated": true
           },
@@ -59,7 +59,7 @@
             "id": "hippopotamus_q2",
             "type": "yes_no",
             "prompt": "L'ippopotamo mangia soprattutto erba?",
-            "acceptedAnswers": ["sì", "si", "yes"],
+            "acceptedAnswer": true,
             "feedback": "Esatto! L'ippopotamo è un erbivoro."
           }
         ]

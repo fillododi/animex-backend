@@ -1,14 +1,23 @@
 import { AppError } from "../middleware/errorHandler";
 import { Animal } from "../schemas/animal.schema";
-import { NextQuizBody, QuizDifficulty, QuizMode, QuizQuestion, QuizType } from "../schemas/quiz.schema";
+import { NextQuizBody, QuizDifficulty, QuizMode, QuizQuestion, QuizType, ValidateQuizBody } from "../schemas/quiz.schema";
 import { catalogService } from "./catalog.service";
 import { geminiService } from "./gemini.service";
 
 type QuizQuestionSource = "curated" | "gemini"
 
+type QuizSuggestedAction = "continue" | "retry" | "chat"
+
 interface NextQuizResponse {
     question: QuizQuestion,
     source: QuizQuestionSource
+}
+
+interface ValidateQuizResponse {
+    correct: boolean | null,
+    score: number,
+    feedback: string,
+    nextAction: QuizSuggestedAction
 }
 
 class QuizService {
@@ -39,6 +48,26 @@ class QuizService {
         throw new AppError({ statusCode: 404, code: "QUIZ_NOT_FOUND", message: "No quiz available" })
     }
 
+    async validateAnswer(input: ValidateQuizBody): Promise<ValidateQuizResponse> {
+        const animal = catalogService.getAnimalById(input.animalId)
+        if(!animal) {
+            throw new AppError({ 
+                statusCode: 404, 
+                code: "ANIMAL_NOT_FOUND", 
+                message: "Animal was not found in the database", 
+                details: { animalId: input.animalId } 
+            })
+        }
+        const normalizedAnswer = this.normalizeForMatching(input.answer.toString())
+        const curatedQuestion = animal.quiz.flatMap(quiz => quiz.questions).find(question => question.id === input.questionId)
+        if(!curatedQuestion || curatedQuestion.type === "open_text") return await this.validateAnswerWithGemini(animal, input.prompt, normalizedAnswer);
+        const correct = this.validateDeterministically(curatedQuestion, normalizedAnswer)
+        const score = correct? 1: 0
+        const feedback = correct? curatedQuestion.feedback: "Ritenta, non è questa la risposta giusta..."
+        const nextAction = correct? "continue": "retry"
+        return { correct, score, feedback, nextAction }
+    }
+
     private selectCuratedQuestion(animal: Animal, previousQuestionIds: string[], mode: QuizMode, difficulty?: QuizDifficulty): QuizQuestion | null {
         const previousIds = new Set(previousQuestionIds)
         const quizzes = difficulty? animal.quiz.filter(quiz => quiz.difficulty === difficulty): animal.quiz
@@ -47,6 +76,10 @@ class QuizService {
             .filter(question => (mode === "animal" && !question.habitatRelated) || (mode == "habitat" && question.habitatRelated))
         if(questions.length > 0) return questions[0];
         return null
+    }
+
+    private normalizeForMatching(text: string): string {
+        return text.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, '').replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim()
     }
 
     private async generateQuestion(animal: Animal, mode: QuizMode, difficulty?: QuizDifficulty): Promise<QuizQuestion | null> {
@@ -90,27 +123,53 @@ Rules:
                 temperature: 0.2,
                 maxOutputTokens: 260
             })
-            if(!this.isValidGeneratedQuestion(question)) return null;
             return question
         } catch {
             return null
         }
     }
 
-    private isValidGeneratedQuestion(question: QuizQuestion): boolean {
-        if(!question || typeof question !== "object") return false;
-        if(!question.id || typeof question.id !== "string") return false;
-        if(!question.prompt || typeof question.prompt !== "string") return false;
-        if(!question.feedback || typeof question.feedback !== "string") return false;
-        if(
-            !question.type || 
-            typeof question.type !== "string" || 
-            (question.type !== "multiple_choice" && question.type !== "open_text" && question.type !== "yes_no")
-        ) {
-            return false;
-        }
-        if (question.type === "multiple_choice" && !(Array.isArray(question.choices))) return false;
-        return true
+    private async validateAnswerWithGemini(animal: Animal, question: string, answer: string): Promise<ValidateQuizResponse> {
+        const prompt =
+`
+You validate a child quiz answer for Animex, a wildlife discovery tool.
+
+Animal:
+- Name: ${animal.displayName}
+- Scientific name: ${animal.scientificName}
+
+Question:
+${question}
+
+Child answer:
+${answer}
+
+Return only JSON with this shape:
+{
+  "correct": true | false,
+  "score": number,
+  "feedback": string,
+  "nextAction": "continue" | "retry" | "chat"
+}
+
+Rules:
+- correct must be true only if the answer is clearly true.
+- correct must be false if the answer is clearly wrong.
+- correct must be null if the answer is unclear.
+- score must be between 0 and 1.
+- feedback must be short, friendly, and in Italian.
+- nextAction represents the suggested new action for the user.
+`.trim()
+        const result = await geminiService.generateJson<ValidateQuizResponse>(
+            prompt, 
+            { systemInstruction: "You are a strict but friendly quiz validator for children.", temperature: 0.1, maxOutputTokens: 160 }
+        )
+        return result
+    }
+
+    private validateDeterministically(question: QuizQuestion, answer: string): boolean {
+        const acceptedAnswer = this.normalizeForMatching(question.acceptedAnswer?.toString() ?? "")
+        return acceptedAnswer === answer
     }
 }
 

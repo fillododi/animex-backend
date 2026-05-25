@@ -33,7 +33,7 @@ export const validateQuizBodySchema = z.object({
                 .max(128)
                 .regex(/^[a-zA-Z0-9._:-]+$/, "sessionId may only contain letters, numbers, dot, underscore, colon, or hyphen."),
     questionId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    answer: z.union([z.string().trim().min(1), z.boolean()]),
+    answer: z.union([z.string().trim().min(1), z.boolean()]).optional(),
     animalId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     prompt: z.string().trim().min(1),
 })

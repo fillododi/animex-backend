@@ -27,6 +27,17 @@ export const quizQuestionSchema = z.object({
     habitatRelated: z.boolean().optional()
 })
 
+export const validateQuizBodySchema = z.object({
+    sessionId: z.string()
+                .min(1)
+                .max(128)
+                .regex(/^[a-zA-Z0-9._:-]+$/, "sessionId may only contain letters, numbers, dot, underscore, colon, or hyphen."),
+    questionId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    answer: z.union([z.string().trim().min(1), z.boolean()]),
+    animalId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    prompt: z.string().trim().min(1),
+})
+
 export type NextQuizBody = z.infer<typeof nextQuizBodySchema>
 export type QuizDifficulty = z.infer<typeof quizDifficultySchema>
 export type QuizMode = z.infer<typeof quizModeSchema>

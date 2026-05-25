@@ -49,7 +49,7 @@ export const animalSchema = z.object({
     }),
     quiz: z.array(z.object({
         difficulty: z.enum(["easy", "medium", "hard"]),
-        questions: z.array(quizQuestionSchema)
+        questions: z.array(quizQuestionSchema).min(1)
     }))
 })
 

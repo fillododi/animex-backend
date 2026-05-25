@@ -14,6 +14,17 @@ export const nextQuizBodySchema = z.object({
     mode: quizModeSchema.optional()
 })
 
+export const quizQuestionSchema = z.object({
+    id: z.string().trim().min(1),
+    type: z.enum(["multiple_choice", "yes_no", "open_text"]),
+    prompt: z.string().trim().min(1),
+    choices: z.array(z.string().trim().min(1)).optional(),
+    acceptedAnswer: z.union([z.string().trim().min(1), z.boolean()]).optional(),
+    feedback: z.string().trim().min(1),
+    habitatRelated: z.boolean().optional()
+})
+
 export type NextQuizBody = z.infer<typeof nextQuizBodySchema>
 export type QuizDifficulty = z.infer<typeof quizDifficultySchema>
 export type QuizMode = z.infer<typeof quizModeSchema>
+export type QuizQuestion = z.infer<typeof quizQuestionSchema>

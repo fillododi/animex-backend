@@ -8,7 +8,6 @@ type QuizQuestionSource = "curated" | "gemini"
 
 interface NextQuizResponse {
     question: QuizQuestion,
-    answer?: string | boolean,
     source: QuizQuestionSource
 }
 
@@ -27,7 +26,6 @@ class QuizService {
         if(curatedQuestion) {
             return { 
                 question: this.toPublicQuestion(curatedQuestion), 
-                ...(curatedQuestion.acceptedAnswer? { answer: curatedQuestion.acceptedAnswer }: {} ),
                 source: "curated" 
             }
         }
@@ -35,7 +33,6 @@ class QuizService {
         if(generatedQuestion) {
             return { 
                 question: this.toPublicQuestion(generatedQuestion),
-                ...(generatedQuestion.acceptedAnswer? { answer: generatedQuestion.acceptedAnswer }: {}),
                 source: "gemini"
             }
         }
@@ -107,7 +104,8 @@ Rules:
             prompt: question.prompt,
             ...(question.choices? { choices: question.choices }: {}),
             feedback: question.feedback,
-            ...(question.habitatRelated? { habitatRelated: question.habitatRelated }: {})
+            ...(question.habitatRelated? { habitatRelated: question.habitatRelated }: {}),
+            ...(question.acceptedAnswer? { acceptedAnswer: question.acceptedAnswer }: {})
         }
     }
 

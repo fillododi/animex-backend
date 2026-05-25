@@ -6,24 +6,10 @@ import { geminiService } from "./gemini.service";
 
 type QuizQuestionSource = "curated" | "gemini"
 
-interface NextQuizQuestion {
-    id?: string,
-    type: QuizType,
-    prompt: string,
-    choices?: string[]
-}
-
 interface NextQuizResponse {
-    question: NextQuizQuestion,
+    question: QuizQuestion,
     answer?: string | boolean,
     source: QuizQuestionSource
-}
-
-interface GeneratedQuestion {
-    type: QuizType,
-    prompt: string,
-    choices?: string[],
-    answer?: string | boolean,
 }
 
 class QuizService {
@@ -48,12 +34,8 @@ class QuizService {
         const generatedQuestion = await this.generateQuestion(animal, input.mode ?? "animal", input.difficulty)
         if(generatedQuestion) {
             return { 
-                question: { 
-                    type: generatedQuestion.type, 
-                    prompt: generatedQuestion.prompt, 
-                    ...(generatedQuestion.choices? { choices: generatedQuestion.choices }: {}) 
-                },
-                ...(generatedQuestion.answer? { answer: generatedQuestion.answer }: {}),
+                question: this.toPublicQuestion(generatedQuestion),
+                ...(generatedQuestion.acceptedAnswer? { answer: generatedQuestion.acceptedAnswer }: {}),
                 source: "gemini"
             }
         }
@@ -70,7 +52,7 @@ class QuizService {
         return null
     }
 
-    private async generateQuestion(animal: Animal, mode: QuizMode, difficulty?: QuizDifficulty): Promise<GeneratedQuestion | null> {
+    private async generateQuestion(animal: Animal, mode: QuizMode, difficulty?: QuizDifficulty): Promise<QuizQuestion | null> {
         const prompt = 
 `
 Create one question for a child using only this animal context.
@@ -87,10 +69,12 @@ Difficulty: ${difficulty ?? 'easy'}
 
 Return only JSON with this shape:
 {
+  "id": "string",
   "type": "multiple_choice" | "open_text" | "yes_no",
   "prompt": string,
   "choices"?: string[],
-  "answer"?: string | boolean
+  "acceptedAnswer"?: string | boolean,
+  "feedback": string
 }
 choices is defined when type is "multiple_choice"
 answer is not defined when type is "open_text", a string when type is "multiple_choice", a boolean when type is "yes_no"
@@ -103,7 +87,7 @@ Rules:
 - Do not invent facts.
 `.trim()
         try {
-            const question = await geminiService.generateJson<GeneratedQuestion>(prompt, { 
+            const question = await geminiService.generateJson<QuizQuestion>(prompt, { 
                 systemInstruction: "You create safe animal quiz questions for children.",
                 temperature: 0.2,
                 maxOutputTokens: 260
@@ -115,18 +99,21 @@ Rules:
         }
     }
 
-    private toPublicQuestion(question: QuizQuestion): NextQuizQuestion {
+    private toPublicQuestion(question: QuizQuestion): QuizQuestion {
         return {
             id: question.id,
             type: question.type,
             prompt: question.prompt,
-            ...(question.choices? { choices: question.choices }: {})
+            ...(question.choices? { choices: question.choices }: {}),
+            feedback: question.feedback
         }
     }
 
-    private isValidGeneratedQuestion(question: GeneratedQuestion): boolean {
+    private isValidGeneratedQuestion(question: QuizQuestion): boolean {
         if(!question || typeof question !== "object") return false;
+        if(!question.id || typeof question.id !== "string") return false;
         if(!question.prompt || typeof question.prompt !== "string") return false;
+        if(!question.feedback || typeof question.feedback !== "string") return false;
         if(
             !question.type || 
             typeof question.type !== "string" || 

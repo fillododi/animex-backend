@@ -13,7 +13,7 @@ export const nextQuizBodySchema = z.object({
     previousQuestionIds: z.array(z.string().trim().min(1)).optional(),
     difficulty: quizDifficultySchema.optional(),
     mode: quizModeSchema.optional()
-})
+}).strict()
 
 export const quizTypeSchema = z.enum(["multiple_choice", "yes_no", "open_text"])
 

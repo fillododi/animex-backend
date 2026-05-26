@@ -31,14 +31,15 @@ class QuizService {
                 details: { animalId: input.animalId } 
             })
         }
-        const curatedQuestion = this.selectCuratedQuestion(animal, input.previousQuestionIds ?? [], input.mode ?? "animal", input.difficulty)
+        const allowedQuizTypes = input.allowedQuizTypes ?? ["multiple_choice", "yes_no", "open_text"]
+        const curatedQuestion = this.selectCuratedQuestion(animal, input.previousQuestionIds ?? [], input.mode ?? "animal", input.difficulty, allowedQuizTypes)
         if(curatedQuestion) {
             return { 
                 question: curatedQuestion, 
                 source: "curated" 
             }
         }
-        const generatedQuestion = await this.generateQuestion(animal, input.mode ?? "animal", input.difficulty)
+        const generatedQuestion = await this.generateQuestion(animal, input.mode ?? "animal", input.difficulty, allowedQuizTypes)
         if(generatedQuestion) {
             return { 
                 question: generatedQuestion,
@@ -68,12 +69,13 @@ class QuizService {
         return { correct, score, feedback, nextAction }
     }
 
-    private selectCuratedQuestion(animal: Animal, previousQuestionIds: string[], mode: QuizMode, difficulty?: QuizDifficulty): QuizQuestion | null {
+    private selectCuratedQuestion(animal: Animal, previousQuestionIds: string[], mode: QuizMode, difficulty?: QuizDifficulty, allowedQuizTypes?: QuizType[]): QuizQuestion | null {
         const previousIds = new Set(previousQuestionIds)
         const quizzes = difficulty? animal.quiz.filter(quiz => quiz.difficulty === difficulty): animal.quiz
         const questions = quizzes.flatMap(quiz => quiz.questions)
             .filter(question => !previousIds.has(question.id))
             .filter(question => (mode === "animal" && !question.habitatRelated) || (mode == "habitat" && question.habitatRelated))
+            .filter(question => !allowedQuizTypes || allowedQuizTypes.includes(question.type))
         if(questions.length > 0) return questions[0];
         return null
     }
@@ -82,7 +84,7 @@ class QuizService {
         return text.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, '').replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim()
     }
 
-    private async generateQuestion(animal: Animal, mode: QuizMode, difficulty?: QuizDifficulty): Promise<QuizQuestion | null> {
+    private async generateQuestion(animal: Animal, mode: QuizMode, difficulty?: QuizDifficulty, allowedQuizTypes?: QuizType[]): Promise<QuizQuestion | null> {
         const prompt = 
 `
 Create one question for a child using only this animal context.
@@ -96,6 +98,7 @@ Animal:
 
 Mode: ${mode}
 Difficulty: ${difficulty ?? 'easy'}
+Allowed quiz types: ${allowedQuizTypes?.join(", ") ?? "every type"}
 
 Return only JSON with this shape:
 {
@@ -110,6 +113,7 @@ Return only JSON with this shape:
 choices is defined when type is "multiple_choice"
 answer is not defined when type is "open_text", a string when type is "multiple_choice", a boolean when type is "yes_no"
 habitatRelated depends on Mode, which can either be animal or habitat
+type can only be one of the allowed quiz types.
 
 Rules:
 - The question must be answerable from the context.

@@ -4,6 +4,8 @@ export const quizDifficultySchema = z.enum(["easy", "medium"])
 
 export const quizModeSchema = z.enum(["animal", "habitat"])
 
+export const quizTypeSchema = z.enum(["multiple_choice", "yes_no", "open_text"])
+
 export const nextQuizBodySchema = z.object({
     sessionId: z.string()
                 .min(1)
@@ -12,10 +14,9 @@ export const nextQuizBodySchema = z.object({
     animalId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     previousQuestionIds: z.array(z.string().trim().min(1)).optional(),
     difficulty: quizDifficultySchema.optional(),
-    mode: quizModeSchema.optional()
+    mode: quizModeSchema.optional(),
+    allowedQuizTypes: z.array(quizTypeSchema).optional()
 }).strict()
-
-export const quizTypeSchema = z.enum(["multiple_choice", "yes_no", "open_text"])
 
 export const quizQuestionSchema = z.object({
     id: z.string().trim().min(1),

@@ -109,7 +109,12 @@ class GeminiService {
         try {
             const response = await fetch(
                 url, 
-                { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": this.apiKey }, body: JSON.stringify(body) }
+                { 
+                    method: "POST", 
+                    signal: controller.signal,
+                    headers: { "Content-Type": "application/json", "x-goog-api-key": this.apiKey }, 
+                    body: JSON.stringify(body) 
+                }
             )
             if(!response.ok) await this.handleBadResponse(response);
             return (await response.json()) as GeminiApiResponse

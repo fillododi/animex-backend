@@ -49,7 +49,7 @@
           {
             "id": "tiger_q1",
             "type": "multiple_choice",
-            "prompt": "Quale caratteristica distintiva ha la pelliccia della tigre?",
+            "prompt": "Che cosa ha la tigre sulla pelliccia?",
             "choices": ["Strisce", "Pois blu", "Piume"],
             "acceptedAnswers": ["Strisce", "le strisce"],
             "feedback": "Esatto! La tigre ha un mantello arancione con strisce scure."

@@ -23,7 +23,7 @@ export const quizQuestionSchema = z.object({
     type: quizTypeSchema,
     prompt: z.string().trim().min(1),
     choices: z.array(z.string().trim().min(1)).optional(),
-    acceptedAnswer: z.union([z.string().trim().min(1), z.boolean()]).optional(),
+    acceptedAnswers: z.array(z.string().trim().min(1)).optional(),
     feedback: z.string().trim().min(1),
     habitatRelated: z.boolean().optional()
 })
@@ -34,7 +34,7 @@ export const validateQuizBodySchema = z.object({
                 .max(128)
                 .regex(/^[a-zA-Z0-9._:-]+$/, "sessionId may only contain letters, numbers, dot, underscore, colon, or hyphen."),
     questionId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    answer: z.union([z.string().trim().min(1), z.boolean()]),
+    answer: z.string().trim().min(1),
     animalId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     prompt: z.string().trim().min(1),
 })

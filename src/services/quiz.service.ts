@@ -106,12 +106,16 @@ Return only JSON with this shape:
   "type": "multiple_choice" | "open_text" | "yes_no",
   "prompt": string,
   "choices"?: string[],
-  "acceptedAnswer"?: string | boolean,
+  "acceptedAnswers"?: string[],
   "feedback": string,
   "habitatRelated"?: boolean
 }
 choices is defined when type is "multiple_choice"
-answer is not defined when type is "open_text", a string when type is "multiple_choice", a boolean when type is "yes_no"
+acceptedAnswers is 
+- not defined when type is "open_text"
+- an array of possible variants of the correct choice type is "multiple_choice"
+- an array of "yes" or "no" variants when type is "yes_no". For instance, if the correct answer is yes, acceptedAnswers could be ["vero", "sì", "si"].
+all strings in acceptedAnswers must be in italian.
 habitatRelated depends on Mode, which can either be animal or habitat
 type can only be one of the allowed quiz types.
 
@@ -172,8 +176,8 @@ Rules:
     }
 
     private validateDeterministically(question: QuizQuestion, answer: string): boolean {
-        const acceptedAnswer = this.normalizeForMatching(question.acceptedAnswer?.toString() ?? "")
-        return acceptedAnswer === answer
+        const acceptedAnswers = (question.acceptedAnswers ?? []).map(answer => this.normalizeForMatching(answer))
+        return acceptedAnswers.includes(answer)
     }
 }
 

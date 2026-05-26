@@ -59,6 +59,7 @@ async function analyzeImage(
             `https://vision.googleapis.com/v1/images:annotate?key=${ENV.GOOGLE_CLOUD_VISION_API_KEY}`, 
             {
                 method: "POST",
+                signal: controller.signal,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestBody)
             }

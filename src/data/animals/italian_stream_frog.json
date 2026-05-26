@@ -51,7 +51,7 @@
             "type": "multiple_choice",
             "prompt": "Qual è un habitat adatto alla rana appenninica?",
             "choices": ["Un ruscello fresco", "Un deserto asciutto", "Un ghiacciaio"],
-            "acceptedAnswers": ["Un ruscello fresco", "ruscello", "torrente"],
+            "acceptedAnswers": ["Un ruscello fresco", "ruscello", "ruscello fresco", "il ruscello"],
             "feedback": "Esatto! Questa rana vive spesso vicino a ruscelli e torrenti.",
             "habitatRelated": true
           },
@@ -59,7 +59,7 @@
             "id": "italian_stream_frog_q2",
             "type": "yes_no",
             "prompt": "La rana appenninica è un anfibio?",
-            "acceptedAnswers": ["sì", "si", "yes"],
+            "acceptedAnswers": ["sì", "si", "vero"],
             "feedback": "Giusto! Le rane sono anfibi."
           }
         ]

@@ -1,7 +1,7 @@
 import path from "node:path"
 import fs from "node:fs/promises"
 import z from "zod"
-import { Animal, AnimalSchema } from "../schemas/animal.schema"
+import { Animal, animalSchema } from "../schemas/animal.schema"
 import { Habitat, HabitatSchema } from "../schemas/habitat.schema"
 import { AppError } from "../middleware/errorHandler"
 
@@ -67,7 +67,7 @@ function createCatalog<T>(options: { dataDir: string, schema: z.ZodSchema<T> }) 
 
 const animalCatalog = createCatalog<Animal>({
     dataDir: path.join(process.cwd(), "src", "data", "animals"),
-    schema: AnimalSchema
+    schema: animalSchema
 })
 
 const habitatCatalog = createCatalog<Habitat>({

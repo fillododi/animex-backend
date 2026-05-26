@@ -9,7 +9,8 @@ export type ErrorCode = "ROUTE_NOT_FOUND" |
     "UNSUPPORTED_MEDIA_TYPE" |
     "PAYLOAD_TOO_LARGE" | 
     "VISION_TIMEOUT" |
-    "GEMINI_TIMEOUT"
+    "GEMINI_TIMEOUT" |
+    "QUIZ_NOT_FOUND"
 
 export const ApiMetaSchema = z.object({
     requestId: z.string(),

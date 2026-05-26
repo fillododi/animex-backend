@@ -1,64 +1,13 @@
 import { z } from "zod"
+import { quizQuestionSchema } from "./quiz.schema"
 
-export type MatchThresholds = {
-    minMatchScore: number,
-    strongMatchScore: number,
-    ambiguityDelta: number
-}
+const matchThresholdsSchema = z.object({
+    minMatchScore: z.coerce.number().min(0).max(1),
+    strongMatchScore: z.coerce.number().min(0).max(1),
+    ambiguityDelta: z.coerce.number().min(0).max(1)
+})
 
-export type Animal = {
-    id: string,
-    displayName: string,
-    scientificName: string,
-    taxonomicClass?: string,
-    aliases: string[],
-    vision: {
-        supportedLabels: {
-            name: string,
-            weight: number
-        }[],
-        supportedWebEntities: {
-            name: string,
-            weight: number
-        }[],
-        negativeLabels: string[],
-        thresholds: MatchThresholds
-    },
-    habitat: {
-        primaryHabitatId: string,
-        habitatIds: string[],
-        summary: string,
-        climate: string,
-        mapRefs: string[]
-    },
-    diet: {
-        type: "herbivore" | "carnivore" | "omnivore" | "insectivore" | "piscivore" | "unknown",
-        description: string,
-        examples: string[]
-    },
-    facts: string[],
-    conservationStatus: "EX" | "EW" | "CR" | "EN" | "VU" | "NT" | "LC",
-    assets: {
-        thumbnail?: string,
-        silhouette?: string,
-        habitatBackground?: string,
-        arObjects?: string[]
-    },
-    quiz: {
-        difficulty: "easy" | "medium" | "hard",
-        questions: {
-            id: string,
-            type: "multiple_choice" | "yes_no" | "open_text",
-            prompt: string,
-            choices?: string[],
-            acceptedAnswers: string[],
-            feedback: string,
-            habitatRelated?: boolean
-        }[]
-    }[]
-}
-
-export const AnimalSchema = z.object({
+export const animalSchema = z.object({
     id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     displayName: z.string().trim().min(1),
     scientificName: z.string().trim().min(1),
@@ -74,11 +23,7 @@ export const AnimalSchema = z.object({
             weight: z.coerce.number().min(0).max(1)
         })),
         negativeLabels: z.array(z.string().trim().min(1)),
-        thresholds: z.object({
-            minMatchScore: z.coerce.number().min(0).max(1),
-            strongMatchScore: z.coerce.number().min(0).max(1),
-            ambiguityDelta: z.coerce.number().min(0).max(1)
-        })
+        thresholds: matchThresholdsSchema
     }),
     habitat: z.object({
         primaryHabitatId: z.string().trim().min(1),
@@ -104,14 +49,9 @@ export const AnimalSchema = z.object({
     }),
     quiz: z.array(z.object({
         difficulty: z.enum(["easy", "medium", "hard"]),
-        questions: z.array(z.object({
-            id: z.string().trim().min(1),
-            type: z.enum(["multiple_choice", "yes_no", "open_text"]),
-            prompt: z.string().trim().min(1),
-            choices: z.array(z.string().trim().min(1)).optional(),
-            acceptedAnswers: z.array(z.string().trim().min(1)),
-            feedback: z.string().trim().min(1),
-            habitatRelated: z.boolean().optional()
-        }))
+        questions: z.array(quizQuestionSchema).min(1)
     }))
 })
+
+export type MatchThresholds = z.infer<typeof matchThresholdsSchema>
+export type Animal = z.infer<typeof animalSchema>

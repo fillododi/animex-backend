@@ -16,6 +16,10 @@ interface GenerateTextOptions {
     timeoutMs?: number
 }
 
+interface GenerateJsonOptions extends GenerateTextOptions {
+    schemaName?: string
+}
+
 interface GeminiUsage {
     promptTokenCount?: number,
     candidatesTokenCount?: number,
@@ -66,6 +70,26 @@ class GeminiService {
         return { text, model: this.model, usage: response.usageMetadata }
     }
 
+    async generateJson<T>(prompt: string, options: GenerateJsonOptions = {}): Promise<T> {
+        const jsonPrompt = [
+            prompt, 
+            "", 
+            "Return ONLY valid JSON.", 
+            "Do not wrap the JSON in markdown.", 
+            "Do not include explanations before or after the JSON."
+        ].join("\n")
+        const result = await this.generateText(jsonPrompt, { ...options, temperature: options.temperature ?? 0.2 })
+        try {
+            return JSON.parse(this.stripJsonCodeFence(result.text)) as T;
+        } catch (error) {
+            throw new AppError({
+                statusCode: 502,
+                code: "VALIDATION_ERROR",
+                message: "Gemini returned invalid JSON"
+            })
+        }
+    }
+
     private async callGemini(prompt: string, options: GenerateTextOptions): Promise<GeminiApiResponse> {
         const controller = new AbortController()
         const timeoutMs = options.timeoutMs ?? this.defaultTimeoutMs
@@ -85,7 +109,12 @@ class GeminiService {
         try {
             const response = await fetch(
                 url, 
-                { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": this.apiKey }, body: JSON.stringify(body) }
+                { 
+                    method: "POST", 
+                    signal: controller.signal,
+                    headers: { "Content-Type": "application/json", "x-goog-api-key": this.apiKey }, 
+                    body: JSON.stringify(body) 
+                }
             )
             if(!response.ok) await this.handleBadResponse(response);
             return (await response.json()) as GeminiApiResponse
@@ -141,6 +170,10 @@ class GeminiService {
         const text = candidate.content?.parts?.map(part => part.text ?? "").join("").trim() ?? ""
         return text
     }
+
+    private stripJsonCodeFence(text: string): string {
+        return text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim()
+    }
 }
 
-export const geminiService = new GeminiService({ apiKey: ENV.GEMINI_API_KEY, defaultTimeoutMs: ENV.GEMINI_TIMEOUT_MS })
+export const geminiService = new GeminiService({ apiKey: ENV.GEMINI_API_KEY, defaultTimeoutMs: ENV.GEMINI_TIMEOUT_MS, model: ENV.GEMINI_MODEL })

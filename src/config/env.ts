@@ -19,7 +19,8 @@ const envSchema = z.object({
     MAX_IMAGE_BYTES: z.coerce.number().int().min(1).max(4*1024*1024).default(3145728),
     RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60000),
     LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
-        .default("info")
+        .default("info"),
+    GEMINI_MODEL: z.string().trim().min(1).default("gemini-3.5-flash")
 })
 
 type Env = z.infer<typeof envSchema>

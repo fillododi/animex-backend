@@ -59,7 +59,7 @@
             "id": "hippopotamus_q2",
             "type": "yes_no",
             "prompt": "L'ippopotamo mangia soprattutto erba?",
-            "acceptedAnswers": ["sì", "si", "yes"],
+            "acceptedAnswers": ["sì", "si", "vero"],
             "feedback": "Esatto! L'ippopotamo è un erbivoro."
           }
         ]

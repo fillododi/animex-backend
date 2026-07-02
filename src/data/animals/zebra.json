@@ -1,0 +1,68 @@
+{
+  "id": "zebra",
+  "displayName": "Zebra di Pianura",
+  "scientificName": "Equus quagga",
+  "taxonomicClass": "Mammalia",
+  "aliases": ["zebra", "zebra comune", "zebra di pianura", "plains zebra"],
+  "vision": {
+    "supportedLabels": [
+      { "name": "zebra", "weight": 1 },
+      { "name": "striped horse", "weight": 0.85 },
+      { "name": "wildlife", "weight": 0.4 }
+    ],
+    "supportedWebEntities": [
+      { "name": "Equus quagga", "weight": 1 },
+      { "name": "Plains zebra", "weight": 0.95 },
+      { "name": "Zebra", "weight": 0.9 }
+    ],
+    "negativeLabels": ["horse", "donkey", "giraffe", "tiger", "lion"],
+    "thresholds": {
+      "minMatchScore": 0.6,
+      "strongMatchScore": 0.8,
+      "ambiguityDelta": 0.1
+    }
+  },
+  "habitat": {
+    "primaryHabitatId": "savannah",
+    "habitatIds": ["savannah", "grassland", "open_woodland"],
+    "summary": "Vive soprattutto nelle savane e nelle praterie dell'Africa orientale e meridionale.",
+    "climate": "Caldo, con stagioni piovose e stagioni asciutte.",
+    "mapRefs": ["africa"]
+  },
+  "diet": {
+    "type": "herbivore",
+    "description": "Mangia soprattutto erba, ma può nutrirsi anche di foglie, germogli e cortecce.",
+    "examples": ["erba", "foglie", "germogli", "corteccia"]
+  },
+  "facts": [
+    "Ogni zebra ha un disegno di strisce unico, come un'impronta digitale.",
+    "Le zebre vivono spesso in gruppi per proteggersi dai predatori.",
+    "Le loro strisce possono confondere i predatori quando corrono insieme.",
+    "La zebra è imparentata con cavalli e asini."
+  ],
+  "conservationStatus": "LC",
+  "assets": {},
+  "quiz": [
+    {
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "zebra_q1",
+          "type": "multiple_choice",
+          "prompt": "Dove vive spesso la zebra?",
+          "choices": ["Nella savana", "Sotto il ghiaccio", "In fondo al mare"],
+          "acceptedAnswers": ["Nella savana", "savana", "nelle savane"],
+          "feedback": "Esatto! La zebra vive spesso nelle savane africane.",
+          "habitatRelated": true
+        },
+        {
+          "id": "zebra_q2",
+          "type": "yes_no",
+          "prompt": "La zebra è un erbivoro?",
+          "acceptedAnswers": ["sì", "si", "vero"],
+          "feedback": "Giusto! La zebra mangia soprattutto erba e altre piante."
+        }
+      ]
+    }
+  ]
+}

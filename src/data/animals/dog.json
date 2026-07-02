@@ -1,0 +1,69 @@
+{
+  "id": "dog",
+  "displayName": "Cane",
+  "scientificName": "Canis lupus familiaris",
+  "taxonomicClass": "Mammalia",
+  "aliases": ["cane", "cane domestico", "dog", "cucciolo"],
+  "vision": {
+    "supportedLabels": [
+      { "name": "dog", "weight": 1 },
+      { "name": "domestic dog", "weight": 0.9 },
+      { "name": "pet", "weight": 0.65 },
+      { "name": "animal", "weight": 0.4 }
+    ],
+    "supportedWebEntities": [
+      { "name": "Canis lupus familiaris", "weight": 1 },
+      { "name": "Dog", "weight": 0.95 },
+      { "name": "Cane", "weight": 0.9 }
+    ],
+    "negativeLabels": ["cat", "wolf", "fox", "lion", "tiger"],
+    "thresholds": {
+      "minMatchScore": 0.6,
+      "strongMatchScore": 0.8,
+      "ambiguityDelta": 0.1
+    }
+  },
+  "habitat": {
+    "primaryHabitatId": "domestic_environment",
+    "habitatIds": ["domestic_environment", "urban_area", "rural_area"],
+    "summary": "Vive con le persone in case, città e campagne di tutto il mondo.",
+    "climate": "Può vivere in molti climi diversi, grazie alle cure delle persone.",
+    "mapRefs": ["world"]
+  },
+  "diet": {
+    "type": "omnivore",
+    "description": "Mangia soprattutto alimenti di origine animale, ma può mangiare anche alcuni vegetali.",
+    "examples": ["carne", "pesce", "crocchette", "verdure adatte"]
+  },
+  "facts": [
+    "Il cane ha un olfatto molto sviluppato.",
+    "I cani comunicano anche con la coda, le orecchie e l'abbaiare.",
+    "Esistono molte razze di cane, con dimensioni e aspetti diversi.",
+    "Molti cani vivono con le persone come animali da compagnia."
+  ],
+  "conservationStatus": "NE",
+  "assets": {},
+  "quiz": [
+    {
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "dog_q1",
+          "type": "multiple_choice",
+          "prompt": "Dove vive spesso il cane domestico?",
+          "choices": ["Con le persone", "Solo nel deserto", "In fondo al mare"],
+          "acceptedAnswers": ["Con le persone", "con le persone", "in casa"],
+          "feedback": "Esatto! Molti cani vivono con le persone.",
+          "habitatRelated": true
+        },
+        {
+          "id": "dog_q2",
+          "type": "yes_no",
+          "prompt": "Il cane usa molto l'olfatto?",
+          "acceptedAnswers": ["sì", "si", "vero"],
+          "feedback": "Giusto! Il cane ha un olfatto molto sviluppato."
+        }
+      ]
+    }
+  ]
+}

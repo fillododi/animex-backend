@@ -1,0 +1,69 @@
+{
+  "id": "cat",
+  "displayName": "Gatto",
+  "scientificName": "Felis catus",
+  "taxonomicClass": "Mammalia",
+  "aliases": ["gatto", "gatto domestico", "cat", "gattino"],
+  "vision": {
+    "supportedLabels": [
+      { "name": "cat", "weight": 1 },
+      { "name": "domestic cat", "weight": 0.9 },
+      { "name": "pet", "weight": 0.65 },
+      { "name": "animal", "weight": 0.4 }
+    ],
+    "supportedWebEntities": [
+      { "name": "Felis catus", "weight": 1 },
+      { "name": "Cat", "weight": 0.95 },
+      { "name": "Gatto", "weight": 0.9 }
+    ],
+    "negativeLabels": ["dog", "tiger", "lion", "leopard", "fox"],
+    "thresholds": {
+      "minMatchScore": 0.6,
+      "strongMatchScore": 0.8,
+      "ambiguityDelta": 0.1
+    }
+  },
+  "habitat": {
+    "primaryHabitatId": "domestic_environment",
+    "habitatIds": ["domestic_environment", "urban_area", "rural_area"],
+    "summary": "Vive spesso nelle case con le persone, ma può esplorare anche giardini, cortili e campagne.",
+    "climate": "Può vivere in molti climi diversi, soprattutto se riceve protezione e cure.",
+    "mapRefs": ["world"]
+  },
+  "diet": {
+    "type": "carnivore",
+    "description": "Mangia principalmente carne e ha bisogno di nutrienti presenti negli alimenti di origine animale.",
+    "examples": ["carne", "pesce", "crocchette per gatti", "cibo umido"]
+  },
+  "facts": [
+    "Il gatto ha baffi sensibili che lo aiutano a orientarsi.",
+    "I gatti dormono molte ore al giorno.",
+    "Le loro unghie sono retrattili.",
+    "Il gatto usa le fusa per comunicare in molte situazioni."
+  ],
+  "conservationStatus": "NE",
+  "assets": {},
+  "quiz": [
+    {
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "cat_q1",
+          "type": "multiple_choice",
+          "prompt": "Dove vive spesso il gatto domestico?",
+          "choices": ["In casa con le persone", "Sotto il ghiaccio", "In mezzo all'oceano"],
+          "acceptedAnswers": ["In casa con le persone", "in casa", "con le persone"],
+          "feedback": "Esatto! Molti gatti domestici vivono nelle case con le persone.",
+          "habitatRelated": true
+        },
+        {
+          "id": "cat_q2",
+          "type": "yes_no",
+          "prompt": "Il gatto è un carnivoro?",
+          "acceptedAnswers": ["sì", "si", "vero"],
+          "feedback": "Giusto! Il gatto mangia principalmente alimenti di origine animale."
+        }
+      ]
+    }
+  ]
+}

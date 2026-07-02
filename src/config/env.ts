@@ -20,7 +20,7 @@ const envSchema = z.object({
     RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60000),
     LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
         .default("info"),
-    GEMINI_MODEL: z.string().trim().min(1).default("gemini-3.5-flash")
+    GEMINI_MODEL: z.string().trim().min(1).default("gemini-3.1-flash-lite")
 })
 
 type Env = z.infer<typeof envSchema>

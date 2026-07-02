@@ -55,7 +55,7 @@ class GeminiService {
             throw new AppError({ statusCode: 500, code: "SERVICE_UNAVAILABLE", message: "Gemini config error", details: "GEMINI_API_KEY is missing" })
         }
         this.apiKey = config.apiKey
-        this.model = config.model ?? "gemini-3.5-flash"
+        this.model = config.model ?? "gemini-3.1-flash-lite"
         this.baseUrl = config.baseUrl ?? "https://generativelanguage.googleapis.com/v1beta"
         this.defaultTimeoutMs = config.defaultTimeoutMs ?? 3000
     }
@@ -102,7 +102,7 @@ class GeminiService {
                 temperature: options.temperature ?? 0.4,
                 maxOutputTokens: options.maxOutputTokens ?? 512,
                 thinkingConfig: {
-                    thinkingBudget: 16
+                    thinkingLevel: "LOW"
                 }
             }
         }

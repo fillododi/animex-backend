@@ -14,9 +14,9 @@ type MatchScore = {
 }
 
 type MatchResult = {
-    animalId?: string,
+    animalId: string,
     confidence: "LOW_CONFIDENCE" | "AMBIGUOUS" | "MATCHED_LOW_CERTAINTY" | "MATCHED",
-    boundingPoly?: BoundingPoly
+    boundingPoly: BoundingPoly
 }
 
 export class AnimalMatcherService {
@@ -90,7 +90,7 @@ export class AnimalMatcherService {
         this.thresholdsByAnimalId.set(animal.id, animal.vision.thresholds)
     }
 
-    matchAnimal(visionSignals: VisionSignal[]): MatchResult {
+    matchAnimal(visionSignals: VisionSignal[]): MatchResult[] {
         const normalizedSignals = visionSignals.map(signal => normalizeVisionSignal(signal))
         const scores: MatchScore[] = []
         for (const animal of this.animalsById.values()) {
@@ -125,21 +125,15 @@ export class AnimalMatcherService {
             logger.info({ animalId: animal.id, score, matchedSignals, boundingPoly }, "animal match score")
             scores.push({ animalId: animal.id, score, matchedSignals, boundingPoly })
         }
-        scores.sort((a, b) => b.score - a.score)
-        const top = scores[0]
-        if(!top) return { confidence: "LOW_CONFIDENCE" }
-        const second = scores[1]
-        const thresholds = this.thresholdsByAnimalId.get(top.animalId)
-        if(top.score < (thresholds?.minMatchScore ?? 0.6)) {
-            return { animalId: top.animalId, confidence: "LOW_CONFIDENCE", boundingPoly: top.boundingPoly }
-        }
-        if(second && top.score - second.score  < (thresholds?.ambiguityDelta ?? 0.1)) {
-            return { animalId: top.animalId, confidence: "AMBIGUOUS", boundingPoly: top.boundingPoly }
-        }
-        if(top.score >= (thresholds?.strongMatchScore ?? 0.9)) {
-            return { animalId: top.animalId, confidence: "MATCHED", boundingPoly: top.boundingPoly }
-        }
-        return { animalId: top.animalId, confidence: "MATCHED_LOW_CERTAINTY", boundingPoly: top.boundingPoly }
+        const sortedScores = scores.filter(score => score.boundingPoly.normalizedVertices).sort((a, b) => b.score - a.score)
+        const results = sortedScores.map(score => {
+            const thresholds = this.thresholdsByAnimalId.get(score.animalId)
+            const confidence = score.score < (thresholds?.minMatchScore ?? 0.6)? "LOW_CONFIDENCE":
+                score.score >= (thresholds?.strongMatchScore ?? 0.9)? "MATCHED":
+                "MATCHED_LOW_CERTAINTY";
+            return { animalId: score.animalId, confidence, boundingPoly: score.boundingPoly } as MatchResult
+        })
+        return results;
     }
 }
 

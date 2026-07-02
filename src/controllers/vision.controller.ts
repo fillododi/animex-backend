@@ -98,13 +98,13 @@ async function identify(req: Request, res: Response) {
     const validatedImage = decodeAndValidateImage(body.imageBase64, body.mimeType, ENV.MAX_IMAGE_BYTES)
     const response = await visionService.analyzeImage(validatedImage.buffer, ENV.VISION_TIMEOUT_MS)
     const signals = response.signals.map(signal => normalizeVisionSignal(signal))
-    const match = animalMatcherService.matchAnimal(signals)
-    const status = match.confidence
-    if (!match.animalId) return res.status(200).json(success(req.requestId, { status }));
-    const animal = catalogService.getAnimalById(match.animalId)
+    const matches = animalMatcherService.matchAnimal(signals)
+    const result = matches.map(match => {
+        const animal = catalogService.getAnimalById(match.animalId)
+        return { id: match.animalId, displayName: animal.displayName, boundingPoly: match.boundingPoly, status: match.confidence }
+    })
     return res.status(200).json(success(req.requestId, { 
-        status, 
-        selectedAnimal: { id: match.animalId, displayName: animal.displayName, boundingPoly: match.boundingPoly } 
+        selectedAnimals: result
     }))
 }
 

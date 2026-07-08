@@ -100,7 +100,7 @@ class GeminiService {
             contents: this.buildContents(prompt, options.history),
             generationConfig: {
                 temperature: options.temperature ?? 0.4,
-                maxOutputTokens: options.maxOutputTokens ?? 512,
+                maxOutputTokens: options.maxOutputTokens ?? 5120,
                 thinkingConfig: {
                     thinkingLevel: "LOW"
                 }

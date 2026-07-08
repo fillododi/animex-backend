@@ -128,7 +128,7 @@ Rules:
         try {
             const question = await geminiService.generateJson<QuizQuestion>(prompt, { 
                 systemInstruction: "You create safe animal quiz questions for children.",
-                temperature: 0.2,
+                temperature: 0.5,
                 maxOutputTokens: 2000
             })
             return question

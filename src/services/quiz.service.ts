@@ -87,18 +87,15 @@ class QuizService {
     private async generateQuestion(animal: Animal, mode: QuizMode, difficulty?: QuizDifficulty, allowedQuizTypes?: QuizType[]): Promise<QuizQuestion | null> {
         const prompt = 
 `
-Create one random question for a child using this animal context as well as other fun facts about this animal.
+Create one random question for a child using fun facts about this animal.
 
 Animal:
 - Name: ${animal.displayName}
 - Scientific name: ${animal.scientificName}
-- Habitat: ${animal.habitat.summary}
-- Diet: ${animal.diet.description}
 
 Mode: ${mode}
 Difficulty: ${difficulty ?? 'easy'}
 Allowed quiz types: ${allowedQuizTypes?.join(", ") ?? "every type"}
-Random seed: please generate it so that the questions are random
 
 Return only JSON with this shape:
 {

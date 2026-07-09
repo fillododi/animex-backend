@@ -120,10 +120,8 @@ habitatRelated depends on Mode, which can either be animal or habitat
 type can only be one of the allowed quiz types.
 
 Rules:
-- The question must be answerable from the context.
 - Keep the prompt short.
 - Use Italian.
-- Do not invent facts.
 `.trim()
         try {
             const question = await geminiService.generateJson<QuizQuestion>(prompt, { 

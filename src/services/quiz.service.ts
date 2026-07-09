@@ -87,7 +87,7 @@ class QuizService {
     private async generateQuestion(animal: Animal, mode: QuizMode, difficulty?: QuizDifficulty, allowedQuizTypes?: QuizType[]): Promise<QuizQuestion | null> {
         const prompt = 
 `
-Create one question for a child using this animal context as well as other fun facts about this animal.
+Create one random question for a child using this animal context as well as other fun facts about this animal.
 
 Animal:
 - Name: ${animal.displayName}
@@ -128,7 +128,7 @@ Rules:
         try {
             const question = await geminiService.generateJson<QuizQuestion>(prompt, { 
                 systemInstruction: "You create safe animal quiz questions for children.",
-                temperature: 0.5,
+                temperature: 0.7,
                 maxOutputTokens: 2000
             })
             return question

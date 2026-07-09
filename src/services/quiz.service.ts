@@ -87,7 +87,7 @@ class QuizService {
     private async generateQuestion(animal: Animal, mode: QuizMode, difficulty?: QuizDifficulty, allowedQuizTypes?: QuizType[]): Promise<QuizQuestion | null> {
         const prompt = 
 `
-Create one question for a child using only this animal context.
+Create one question for a child using this animal context as well as other fun facts about this animal.
 
 Animal:
 - Name: ${animal.displayName}

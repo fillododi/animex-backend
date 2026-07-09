@@ -94,7 +94,6 @@ Animal:
 - Scientific name: ${animal.scientificName}
 - Habitat: ${animal.habitat.summary}
 - Diet: ${animal.diet.description}
-- Facts: ${animal.facts.join(' | ')}
 
 Mode: ${mode}
 Difficulty: ${difficulty ?? 'easy'}

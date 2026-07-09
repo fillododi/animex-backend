@@ -99,6 +99,7 @@ Animal:
 Mode: ${mode}
 Difficulty: ${difficulty ?? 'easy'}
 Allowed quiz types: ${allowedQuizTypes?.join(", ") ?? "every type"}
+Random seed: please generate it so that the questions are random
 
 Return only JSON with this shape:
 {

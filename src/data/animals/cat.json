@@ -9,7 +9,7 @@
       { "name": "cat", "weight": 1 },
       { "name": "domestic cat", "weight": 0.9 },
       { "name": "pet", "weight": 0.65 },
-      { "name": "animal", "weight": 0.4 }
+      { "name": "mammal", "weight": 0.3 }
     ],
     "supportedWebEntities": [
       { "name": "Felis catus", "weight": 1 },
